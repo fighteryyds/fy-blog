@@ -28,7 +28,7 @@ theme:
 
 nav:
   - 主页: index.md 
-    - 美食: food/food.md
+  - 美食: food/food.md
 
 plugins:
   - mermaid2:
