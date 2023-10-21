@@ -29,7 +29,7 @@ theme:
 nav:
   - 主页: index.md 
   - 美食: 
-    - hunmerger: food/food.md
+    - ice cream: food/food.md
 
 plugins:
   - mermaid2:
