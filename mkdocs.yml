@@ -28,7 +28,7 @@ theme:
 
 nav:
   - 主页: index.md 
-  - 个人主页： 
+  - 个人主页 ： 
     - ice cream: food/food.md
     - study: food/study.md
 plugins:
