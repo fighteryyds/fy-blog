@@ -1,1 +1,1 @@
-I like hamburgers.
+#Linux studying
