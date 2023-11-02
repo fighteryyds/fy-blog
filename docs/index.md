@@ -1,3 +1,3 @@
 # Hello
 
-hi, im zjx.I like English.
+hi, im zjx.I like Linux.
