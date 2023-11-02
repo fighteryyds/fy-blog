@@ -1,1 +1,2 @@
-#Linux studying 8-)![Alt text][id]
+#Linux studying :)_![Alt text][id][id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
+
