@@ -1,3 +1,3 @@
-# #Linux studying 
+#Linux studying 
 
-## ## 常用语法
+## 常用语法
