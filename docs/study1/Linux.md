@@ -1,2 +1,3 @@
-#Linux studying :)_![Alt text][id][id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
+# #Linux studying 
 
+## ## 常用语法
