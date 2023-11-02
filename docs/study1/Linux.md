@@ -1,1 +1,1 @@
-#Linux studying 8-)
+#Linux studying 8-)![Alt text][id]
