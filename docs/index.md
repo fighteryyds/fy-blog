@@ -2,4 +2,4 @@
 
 hi, im zjx.I like Linux.
 
-![111](111.png)
+![111](234/111.png)
