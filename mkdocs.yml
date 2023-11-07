@@ -27,7 +27,7 @@ theme:
   language: zh
 
 nav:
-  - 主页:
+  - zhuye:
     - zhuye: index.md
     - 友链: youlian.md
   - 学习:
