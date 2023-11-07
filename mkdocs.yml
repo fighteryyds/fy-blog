@@ -27,8 +27,8 @@ theme:
   language: zh
 
 nav:
-  - zhuye:
-    - zhuye: index.md
+  - 主页:
+    - 主页: index.md
     - 友链: youlian.md
   - 学习:
     - Linux: study1/Linux.md
