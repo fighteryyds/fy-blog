@@ -28,7 +28,7 @@ theme:
 
 nav:
   - 主页:
-    - Home: index.md
+    - zhuye: index.md
     - 友链: youlian.md
   - 学习:
     - Linux: study1/Linux.md
