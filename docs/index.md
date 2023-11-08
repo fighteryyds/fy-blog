@@ -1,11 +1,11 @@
-# Hello
+# 2023.11.8北大红楼一日游
 
-hi, im zjx.I like Linux.
+- ![123](index/81.jpg)
 
-  <details>
-      <summary>2345</summary>
-      <p>
-          <img src="./index/333.png"/>
-      </p>
-  </details>
+- ![123](index/82.jpg)
 
+- ![123](index/83.jpg)
+
+- ![123](index/84.jpg)
+
+- ![123](index/85.jpg)

@@ -33,6 +33,8 @@ nav:
   - 学习:
     - Linux: study1/Linux.md
     - c语言: study1/c.md
+    - 文章: study1/article.md
+    - 生活: study1/life.md
 plugins:
   - mermaid2:
       arguments:
