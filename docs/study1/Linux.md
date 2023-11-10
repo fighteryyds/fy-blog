@@ -57,7 +57,7 @@
 1.终端中使用
 
 ```
-sudo qpt install screen
+sudo qpt install tmux
 ```
 
 2.输入tmux进入
