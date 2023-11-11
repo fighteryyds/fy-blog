@@ -55,15 +55,15 @@ man man
 
 - 我在OPTIONS中还是不太明白-k的意思，然后退出man并在命令行中输入:
 
-- ```
-  man -k printf
+- ```   
+  man -k printf  
 
 - ![123](article/111112.jpg)
 
 - 查看printf（1）这个shell命令，输入：
 
 - ```
-  man 1 printf
+  man 1 printf   
 
 - ![123](article/111113.jpg)
 
