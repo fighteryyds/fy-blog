@@ -70,7 +70,7 @@ man man
 - 查看printf(3)这个库函数，输入：
 
 - ```
-  man 3 printf
+  man 3 printf   
 
 - ![123](article/111111.jpg)
 
