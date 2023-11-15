@@ -85,6 +85,77 @@ make ex4
 
 ### 我目前学到或者见识到的东西：
 
-1.make
+1.make(在Python中，你仅仅需要输入`python`，就可以运行你想要运行的代码。Python的解释器会运行它们，并且在运行中导入它所需的库和其它东西。Make会构建源码，执行测试，设置一些选项以及为你做所有Python通常会做的事情。)
 
-2.valgrind
+2.valgrind（是一种检测错误的工具）s
+
+a.下载：
+
+```
+1|wget https://sourceware.org/pub/valgrind/valgrind-3.16.1.tar.bz2      #使用下载命令下载压缩包
+```
+
+```
+2|tar-jxvf valgrind-3.16.1.tar.bz2   #解压安装包
+```
+
+```
+3|cd valgrind-3.16.1    #进入目录
+```
+
+```
+4|./configure    #配置valgrind,生成MakeFile文件
+```
+
+```
+5|make    #编译Valgrind
+```
+
+```
+6|make install   #安装Valgrind
+```
+
+在valgrind下运行文件
+
+```
+valgrind ./ex4
+```
+
+3.a使用char来声明，以周围带有'（单引号）的单个字符来表示，使用%c来打印。
+
+```
+char initial = 'A';
+printf("I have an initial %c.\n", initial);
+```
+
+- b.使用char name[]来声明，以周围带有“的一些字符来表示，使用%s来打印。
+
+```
+char first_name[] = "Zed";
+printf("I have a first name %s.\n", first_name);
+```
+
+- c.long用%ld占位符
+- d.使用%e以科学计算法的形式打印
+
+- e.特殊语法'\0'声明了一个字符，这样创建了一个“空字节”字符，实际上是数字0：
+
+```
+char nul_byte = '\0';
+int care_percentage = bugs * nul_byte;
+printf("Which means you should care %d%%.\n",
+            care_percentage);
+```
+
+- 结果：
+
+```
+Which means you should care 0%.
+```
+
+- f.用俩个%%来打印一个%
+
+```
+printf("Which means you should care %d%%.\n",
+            care_percentage);
+```
