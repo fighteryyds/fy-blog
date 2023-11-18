@@ -85,3 +85,11 @@ ctrl+b再按o      #英文字母o不是数字0
 ```
 ctrl=b再按{或者}，一个向前切换，一个向后切换。
 ```
+
+## 在Linux中永久调整大小比例的命令：
+
+```
+gsettings set org.gnome.desktop.inerface scaling-factor 2
+```
+
+- 其中最后的2是倍数，改成1.5，即1.5倍
