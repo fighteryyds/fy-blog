@@ -121,24 +121,24 @@ a.下载：
 valgrind ./ex4
 ```
 
-3.a使用char来声明，以周围带有'（单引号）的单个字符来表示，使用%c来打印。
+3.1使用char来声明，以周围带有'（单引号）的单个字符来表示，使用%c来打印。
 
 ```
 char initial = 'A';
 printf("I have an initial %c.\n", initial);
 ```
 
-- b.使用char name[]来声明，以周围带有“的一些字符来表示，使用%s来打印。
+- 3.2.使用char name[]来声明，以周围带有“的一些字符来表示，使用%s来打印。
 
 ```
 char first_name[] = "Zed";
 printf("I have a first name %s.\n", first_name);
 ```
 
-- c.long用%ld占位符
-- d.使用%e以科学计算法的形式打印
+- 3.3.long用%ld占位符
+- 3.4.使用%e以科学计算法的形式打印
 
-- e.特殊语法'\0'声明了一个字符，这样创建了一个“空字节”字符，实际上是数字0：
+- 3.5.特殊语法'\0'声明了一个字符，这样创建了一个“空字节”字符，实际上是数字0：
 
 ```
 char nul_byte = '\0';
@@ -153,14 +153,14 @@ printf("Which means you should care %d%%.\n",
 Which means you should care 0%.
 ```
 
-- f.用俩个%%来打印一个%
+- 3.6.用俩个%%来打印一个%
 
 ```
 printf("Which means you should care %d%%.\n",
             care_percentage);
 ```
 
-- g.&&与||：
+- 3.7.&&与||：
 
 ```
 【问题描述】
@@ -197,3 +197,64 @@ printf("Which means you should care %d%%.\n",
 - 我利用此题来介绍一下二者的区别
 - 1.||表示或者，要想此题得出正确答案，那个a除以那四个数之后，得到的余数也是分别四个特定的数。只要不满足其中任何一个，那么就需要使a不断递增，知道找到那一位正确的数。此代码中，只要a满足4个条件中的任意一个，也就是有一个除完数之后余数并不是自己想要的，那么就会继续进入循环，它是一种或的关系。也就是只要有一个满足条件就会进入循环，当所有条件都不满足时，才会跳出循环。
 - 2.&&表示并且，也就是说，只有当四个条件都满足时，才会进入循环，也就是说a必须做到除完数后，没有一个余数符合条件，才会进入循环，更新a的值。如果有其中一个余数符合我们想要的，而另外三个不符合，它也会跳出循环，直接输出。也就是只要有一个不满足循环条件，那么它就会跳出循环，满足所有条件时才会进入循环。
+
+4.数组大小：
+
+```
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+    int areas[] = {10, 12, 13, 14, 20};
+    char name[] = "Zed";
+    char full_name[] = {
+        'Z', 'e', 'd',
+         ' ', 'A', '.', ' ',
+         'S', 'h', 'a', 'w', '\0'
+    };
+
+    // WARNING: On some systems you may have to change the
+    // %ld in this code to a %u since it will use unsigned ints
+    printf("The size of an int: %ld\n", sizeof(int));
+    printf("The size of areas (int[]): %ld\n",
+            sizeof(areas));
+    printf("The number of ints in areas: %ld\n",
+            sizeof(areas) / sizeof(int));
+    printf("The first area is %d, the 2nd %d.\n",
+            areas[0], areas[1]);
+
+    printf("The size of a char: %ld\n", sizeof(char));
+    printf("The size of name (char[]): %ld\n",
+            sizeof(name));
+    printf("The number of chars: %ld\n",
+            sizeof(name) / sizeof(char));
+
+    printf("The size of full_name (char[]): %ld\n",
+            sizeof(full_name));
+    printf("The number of chars: %ld\n",
+            sizeof(full_name) / sizeof(char));
+
+    printf("name=\"%s\" and full_name=\"%s\"\n",
+            name, full_name);
+
+    return 0;
+}
+```
+
+```
+The size of an int: 4
+The size of areas (int[]): 20
+The number of ints in areas: 5
+The first area is 10, the 2nd 12.
+The size of a char: 1
+The size of name (char[]): 4
+The number of chars: 4
+The size of full_name (char[]): 12
+The number of chars: 12
+name="Zed" and full_name="Zed A. Shaw"
+
+```
+
+int的大小是4，areas中含有5个整数，所有要用20个字节来储存它
+
+char的大小是1，name中含有三个字符的字符串，full__ _name中含有12个单字符，而打印出它们的字节大小却分别是4和12，full__ _name很好理解,因为它本身就含有12个单字符，但name为什么是4呢，百思不得其解下，我谷歌了一下，原来char类型的数组是以“\0”空字符结尾的。这下就明白了， full__name本身就是以“\0”空字符来结尾的，所以就是12个字节，不需要+1，而name原本应该是“zed\0”，所以它需要+1.
