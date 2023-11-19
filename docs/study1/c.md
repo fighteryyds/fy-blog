@@ -258,3 +258,80 @@ name="Zed" and full_name="Zed A. Shaw"
 int的大小是4，areas中含有5个整数，所以自然需要用20个字节来储存它
 
 char的大小是1，name中含有三个字符的字符串，full__ _name中含有12个单字符，而打印出它们的字节大小却分别是4和12，full__ _name很好理解,因为它本身就含有12个单字符，但name为什么是4呢，百思不得其解下，我谷歌了一下，原来char类型的数组是以“\0”空字符结尾的。这下就明白了， full__name本身就是以“\0”空字符来结尾的，所以就是12个字节，不需要+1，而name原本应该是“zed\0”，所以它需要+1.
+
+5.数组和字符串：
+
+```
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+    int numbers[4] = {0};
+    char name[4] = {'a'};
+
+    // first, print them out raw
+    printf("numbers: %d %d %d %d\n",
+            numbers[0], numbers[1],
+            numbers[2], numbers[3]);
+
+    printf("name each: %c %c %c %c\n",
+            name[0], name[1],
+            name[2], name[3]);
+
+    printf("name: %s\n", name);
+
+    // setup the numbers
+    numbers[0] = 1;
+    numbers[1] = 2;
+    numbers[2] = 3;
+    numbers[3] = 4;
+
+    // setup the name
+    name[0] = 'Z';
+    name[1] = 'e';
+    name[2] = 'd';
+    name[3] = '\0';
+
+    // then print them out initialized
+    printf("numbers: %d %d %d %d\n",
+            numbers[0], numbers[1],
+            numbers[2], numbers[3]);
+
+    printf("name each: %c %c %c %c\n",
+            name[0], name[1],
+            name[2], name[3]);
+
+    // print the name like a string
+    printf("name: %s\n", name);
+
+    // another way to use name
+    char *another = "Zed";
+
+    printf("another: %s\n", another);
+
+    printf("another each: %c %c %c %c\n",
+            another[0], another[1],
+            another[2], another[3]);
+
+    return 0;
+}
+
+```
+
+输出：
+
+```
+numbers: 0 0 0 0
+name each: a   
+name: a
+numbers: 1 2 3 4
+name each: Z e d 
+name: Zed
+another: Zed
+another each: Z e d 
+```
+
+- 5.1第一个numbers并没有提供全部的四个参数，第一个name也只提供了一个元素，可是为什么numbers可以将所有的元素打印出来，而name却只有一个a。那是因为numbers为int类型，未提供的剩余元素都会默认为0，而char未写出的元素默认为“\0"空字符，而空字符并不会显示。
+- 5.2创建一个字符串的常用语法char name[4] = {'a'}和char *another = "name"俩中，其中后者比较常用。
+
+- 在C语言中字符数组和字符串没有什么不同。
