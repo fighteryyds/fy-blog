@@ -144,7 +144,7 @@ grep, sed , awk
     一般我们使用正则表达式所使用的语系是LANG=C
 
 而正则表达式为了避免语系对输出结果的影响，设置了一些特殊字符，匹配特定的字符，在不同语系下的结果是相同的。
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20190307161332696.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzMjcxMjAy,size_16,color_FFFFFF,t_70)
+ ![在这里插入图片描述](Linux/11202.jpg)
 
 <MARK>这个用法像极了C语言中的<ctype.h>作为头文件引用的一系列函数，它们的功能是计算指定符号的个数，列如大写字母，小写字母，空格，TAB的个数。</MARK>
 
