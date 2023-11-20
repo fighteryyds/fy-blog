@@ -50,6 +50,20 @@
 23.less 文件名  #查看文件（可翻页）
 
 24.kill+PID #结束进程
+
+25.mkdir temp  #创建一个目录temp
+
+26.cp ../newfile . #将上级目录中的文件newfile复制到当前目录下
+
+27.cp newfile aaa  #将文件newfile复制为新文件aaa
+
+28.mv aaa bbb  #将文件aaa重命名为bbb
+
+29.mv bbb ..  #将文件bbb移动到上级目录
+
+30.rm bbb  #删除文件bbb
+
+31.rm -r temp #递归删除目录temp
 ```
 
 ## 在Linux如何分屏:
