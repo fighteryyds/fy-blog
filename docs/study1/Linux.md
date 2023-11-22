@@ -243,3 +243,13 @@ du -sc ~/Documents/* | sort -nr | less
 ```
 
 最后的less工具很好用，当目录过多无法再一个屏幕内全部显示时可以添加“<mark>| less</mark>”来实现翻页 B 是向上翻页，空格是向下翻页。
+
+我的电脑的结果展示：
+
+第一个是Documents目录中的目录：
+
+![ ](Linux/11222.jpg)
+
+然后是/usr/share目录中的各个目录：
+
+![ ](Linux/11223.jpg)
