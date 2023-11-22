@@ -253,3 +253,32 @@ du -sc ~/Documents/* | sort -nr | less
 然后是/usr/share目录中的各个目录：
 
 ![ ](Linux/11223.jpg)
+
+### 在LInux上编写Hello World程序：
+
+1.首先创建一个目录
+
+```
+cd ~
+mkdir Templates
+```
+
+2.然后键入
+
+```
+cd Templates
+```
+
+3.使用vim开始编辑
+
+```
+vi hello.c
+```
+
+4.手敲完代码后，按Esc退出insert模式，进入命令模式，然后输入wq+回车，保存并退出。
+
+展示我的电脑上的结果：
+
+![ ](Linux/11224.jpg)
+
+就像第一次用c在windows敲出Hello World一样，内心十分激动。
