@@ -210,7 +210,7 @@ git reset --hard b87c
 2|git commit
 ```
 
-![ ](article/11248.jpg)
+ 	![ ](article/11248.jpg)
 
 然后我再创建一个新的分支：
 
