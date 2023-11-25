@@ -463,7 +463,26 @@ break用来跳出无限循环，举个栗子：
 
 以下方法也被称为冒泡排序法：
 
-
+```
+#include <stdio.h>
+int main() {
+    int a,b,c,d,e,f,g=0;
+    scanf("%d%d%d%d",&a,&b,&c,&d);
+    int sz[4]={a,b,c,d};
+    while(1){
+     for(e=0;e<3;e++){
+      if(sz[e]>sz[e+1]){
+      f=sz[e];
+      sz[e]=sz[e+1];
+      sz[e+1]=f; }}
+      if(sz[0]<=sz[1]&&sz[1]<=sz[2]&&sz[2]<=sz[3])
+      break;}
+    while(g<=3){
+     printf("%d ",sz[g]);
+     g++;}
+    return 0; 
+}
+```
 
 ### if,else if,else
 
