@@ -193,7 +193,7 @@ git reset --hard b87c
 
 使用`git branch`来查看所有分支：
 
-<img src="article/12245.jpg" alt="图片" style="zoom:50%;" />
+<img src="article/12245.jpg" width="50%"  />
 
 可以看到有俩个分支，一个是1224，一个master,前者是407a下的分支，后者是主分支。
 
