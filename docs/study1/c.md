@@ -383,3 +383,48 @@ int main(int argc, char *argv[])
 ![ ](c/11221.jpg)
 
 看到它所描述的文件在下标为0处存储的结果输出时，我非常激动，因为我原本并不理解它在说什么，而且给的程序如果自己不加修改，也不会有什么东西会输出。 
+
+ 7.while循环：
+
+在这次的练习中，我明白了下面这俩的话的含义：
+
+- OS将每个命令行参数作为字符串传入`argv`数组，<mark>程序名称`./ex10`在下标为0的位置</mark>，剩余的参数紧随其后。
+- OS将`argc`置为`argv`数组中参数的数量，所以你可以遍历它们而不会越界。要记住如果你提供了一个参数，程序名称是第一个，参数应该在第二个。
+
+```
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+    // go through each string in argv
+
+    int i = 0;
+    while(i < argc) {
+        printf("arg %d: %s\n", i, argv[i]);
+        i++;
+    }
+
+    // let's make our own array of strings
+    char *states[] = {
+        "California", "Oregon",
+        "Washington", "Texas"
+    };
+
+    int num_states = 4;
+    i = 0;  // watch for this
+    while(i < num_states) {
+        printf("state %d: %s\n", i, states[i]);
+        i++;
+    }
+
+    return 0;
+}
+
+```
+
+![ ](c/11251.jpg)
+
+- 原来我在for循环部分就比较困惑，为什么`argc`并没有赋值，却可以使`i<argc`的条件为真，并且可以使函数正常运行，直到我看到了while循环的俩个测试与输出，我才知道它大概是如何实现的了。
+
+- 当我输入`./ex11 test it`这时产生了3个命令行参数，然后这些命令行参数作为字符串传入了`argv`数组，分别存储在`argv[0]`,`argv[1]`,`argv[2]`当中，然后就是解释`argc`是如何得到赋值的，为什么它并没有被输入，却又不是随机数，因为它可以使程序正常运行。原来它的值就是argv数组中所有参数的总数量，这样一来，因为i与数组一样都是从0开始的，argc却是从1开始的，所以i永远小于argc，这样就会使条件为真，并且为真的次数可以用来输出所有的数组中的字符串。
+
