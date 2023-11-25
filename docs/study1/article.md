@@ -193,7 +193,7 @@ git reset --hard b87c
 
 使用`git branch`来查看所有分支：
 
-<img src="article/12245.jpg" alt=" " style="zoom:50%;" />
+<img src="article/12245.jpg" style="zoom:50%;" />
 
 可以看到有俩个分支，一个是1224，一个master,前者是407a下的分支，后者是主分支。
 
@@ -210,7 +210,7 @@ git reset --hard b87c
 2|git commit
 ```
 
- 	![ ](article/11248.jpg)
+![ ](article/11248.jpg)
 
 然后我再创建一个新的分支：
 
