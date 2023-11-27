@@ -625,3 +625,101 @@ int main(int argc, char *argv[])
 3.一定要先编写`case`和`break`，再编写其中的代码。
 
 4.如果能够简化的话，用`if`语句代替。
+
+### 编写并使用函数：
+
+```
+#include <stdio.h>
+#include <ctype.h>
+
+// forward declarations
+int can_print_it(char ch);
+void print_letters(char arg[]);
+
+void print_arguments(int argc, char *argv[])
+{
+    int i = 0;
+
+    for(i = 0; i < argc; i++) {
+        print_letters(argv[i]);
+    }
+}
+
+void print_letters(char arg[])
+{
+    int i = 0;
+
+    for(i = 0; arg[i] != '\0'; i++) {
+        char ch = arg[i];
+
+        if(can_print_it(ch)) {
+            printf("'%c' == %d ", ch, ch);
+        }
+    }
+
+    printf("\n");
+}
+
+int can_print_it(char ch)
+{
+    return isalpha(ch) || isblank(ch);
+}
+
+
+int main(int argc, char *argv[])
+{
+    print_arguments(argc, argv);
+    return 0;
+}
+```
+
+![ ](c/11272.jpg)
+
+自己写一个函数大概的<mark>步骤</mark>：
+
+类型一
+
+1.先声明函数
+
+2.再定义函数（本例就是如此）
+
+3最后在主函数中进行调用
+
+类型二
+
+1.先声明函数
+
+2.在主函数中进行调用
+
+3.最后定义函数
+
+此程序要点：
+
+1.判断条件为函数的返回值
+
+```
+if(can_print_it(ch))    #if当中的式子为非零时，执行if当中的内容，当if当中的值为0时，不执行|也就是看can_print_it(char ch)函数的返回值是否为0
+```
+
+```
+int can_print_it(char ch)
+{
+    return isalpha(ch) || isblank(ch);
+}
+```
+
+此函数返回值为字母与空格的或运算，一真为正（返回1），全假为假（返回0）
+
+2.测试时输入的命令行参数
+
+```
+1|./ex14 hi this is cool
+```
+
+```
+2|./ex14 "I go 3 spaces"
+```
+
+为什么这俩个测试命令的结果一个有输出空格，而另一个没有呢？
+因为在读取时，第一个用空格隔开共读取了5个命令行参数，而第二个共读取了2个命令行参数，双引号整体算一个命令行参数。所以第二个会逐字读取。
+
