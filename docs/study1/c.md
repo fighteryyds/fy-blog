@@ -548,4 +548,80 @@ int main() {
 }
 ```
 
-### Switch语句
+### Switch语句:
+
+```
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+    if(argc != 2) {
+        printf("ERROR: You need one argument.\n");
+        // this is how you abort a program
+        return 1;
+    }
+
+    int i = 0;
+    for(i = 0; argv[1][i] != '\0'; i++) {
+        char letter = argv[1][i];
+
+        switch(letter) {
+            case 'a':
+            case 'A':
+                printf("%d: 'A'\n", i);
+                break;
+
+            case 'e':
+            case 'E':
+                printf("%d: 'E'\n", i);
+                break;
+         
+                if(i > 2) {
+                    // it's only sometimes Y
+                    printf("%d: 'Y'\n", i);
+                }
+                break;
+
+            default:
+                printf("%d: %c is not a vowel\n", i, letter);
+        }
+    }
+
+    return 0;
+}
+```
+
+![ ](c/11271.jpg)
+
+我将程序走一遍：
+
+- 此程序从上往下走，当输入的命令行参数的个数不等于而时，就会输出一段话，让你来输入出来`./ex*`外，再输入一个命令行参数，所以输入` ./ex13 Zed Shaw`会被警告，然后就是读取`argv[1][i]`代表了从下标为1的数组中依次取出带个字母，然后再来判断是否属于元音字母(大小写都会进入），每判断完一个字母，它就会跳出Switch语句重新进入。如果不是元音会进入default，输出它不是一个元音。
+
+作者要点：
+
+- switch实际上是一个<mark>跳转表</mark>，只能够放置结果为整数的表达式，而不是一些随机的布尔表达式，这些整数用于计算从switch顶部到匹配部分的跳转。
+- switch的工作原理：
+
+1.编译器会标记`swicth`语句的顶端，我们先把它记为地址Y。
+
+2.接着对`switch`中的表达式求值，产生一个数字。在上面的例子中，数字为`argv[1]`中字母的原始的ASCLL码。
+
+3.编译器也会把每个类似`case 'A'`的`case`代码块翻译成这个程序中距离语句顶端的地址，所以`case 'A'`就在`Y + 'A'`处。
+
+4.接着计算是否`Y+letter`位于`switch`语句中，如果距离太远则会将其调整为`Y+Default`。
+
+5.一旦计算出了地址，程序就会“跳”到代码的那个位置并继续执行。这就是一些`case`代码块中有`break`而另外一些没有的原因。
+
+6.如果输出了`'a'`，那它就会跳到`case 'a'`，它里面没有`break`语句，所以它会贯穿执行底下带有代码和`break`的`case 'A'`。
+
+7.最后它执行这段代码，执行`break`完全跳出`switch`语句块。
+
+原则：
+
+1.总是要包含一个`default:`分支，可以让你接住被忽略的输入。
+
+2..不要允许“贯穿”执行，除非你真的想这么做，这种情况下最好添加一个`//fallthrough`的注释。
+
+3.一定要先编写`case`和`break`，再编写其中的代码。
+
+4.如果能够简化的话，用`if`语句代替。
