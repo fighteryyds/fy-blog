@@ -729,3 +729,73 @@ int can_print_it(char ch)
 为什么这俩个测试命令的结果一个有输出空格，而另一个没有呢？
 因为在读取时，第一个用空格隔开共读取了5个命令行参数，而第二个共读取了2个命令行参数，双引号整体算一个命令行参数。所以第二个会逐字读取。
 
+### 指针（哈哈，看了好几遍才理解）
+
+```
+#include <stdio.h>
+ 
+int main(int argc, char *argv[])
+{
+    // create two arrays we care about
+    int ages[] = {23, 43, 12, 89, 2};
+    char *names[] = {
+        "Alan", "Frank",
+        "Mary", "John", "Lisa"
+    };
+
+    // safely get the size of ages
+    int count = sizeof(ages) / sizeof(int);
+    int i = 0;
+
+    // first way using indexing
+    for(i = 0; i < count; i++) {
+        printf("%s has %d years alive.\n",
+                names[i], ages[i]);
+    }
+
+    printf("---\n");
+    // setup the pointers to the start of the arrays
+    int *cur_age = ages;
+    char *cur_name* = names;
+
+    // second way using pointers
+    for(i = 0; i < count; i++) {
+        printf("%s is %d years old.\n",
+                *(cur_name+i), *(cur_age+i));
+    }
+    //names[i],ages[i]
+
+    printf("---\n");
+
+    // third way, pointers are just arrays
+    for(i = 0; i < count; i++) {
+        printf("%s is %d years old again.\n",
+                cur_name[i], cur_age[i]);
+    }
+
+    printf("---\n");
+
+    // fourth way with pointers in a stupid complex way
+    for(cur_name = names, cur_age = ages;
+            (cur_age - ages) < count;
+            cur_name++, cur_age++)
+    {
+        printf("%s lived %d years so far.\n",
+                *cur_name, *cur_age);
+    }
+
+    return 0;
+}
+```
+
+此程序以四种方式打印出了相同的输出：
+
+![ ](c/11281.jpg)
+
+在他说“<mark>这个看似简单的程序却包含了大量的信息，其目的是在我向你讲解前尝试让你自己弄清楚指针。直到你写下你认为指针做了什么之前，不要往下阅读。</mark>”我先从头到尾看走了一遍程序，将每一步都理解了一下，尽可能地知道它们都是如何实现的了，一些比较新的地方，我也是意会了一下（比如比较抽象的数组++ ：“cur_name++”）。做完这一步后，我也是对这个程序不再陌生了，越看越熟悉（因为这里的指针与数组有着微妙的关系，指针在用着数组的语法，有时甚至只是换了一种形式来表达相同的含义）。
+
+- `*(cur_name+i)`和`name[i]`是一样的，你应该把它读作“‘`cur_name`指针加`i`’的值”。这样就可以理解第一种与第二种本质是一样的。
+- 第三种甚至可以说只是给`name`和`age`数组换了个名字一样
+- 第四中就比较复杂了全部都使用指针（我有时再Frank的影响下，认为是快捷方式）来作为变量实现for中的初始化和条件判断和递增，这显然要比前三种看起来更复杂一些，但是你如果把它单纯的看作是一个变量那就非常好理解了，实际上并不是。
+- 无论怎么样，你都不应该把指针和数组混为一谈。它们并不是相同的东西，即使C让你以一些相同的方法来使用它们。例如，如果你访问上面代码中的`sizeof(cur_age)`，你会得到指针的大小，而不是它指向数组的大小。如果你想得到整个数组的大小，你应该使用数组的名称`age`，就像第12行那样
+
