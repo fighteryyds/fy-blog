@@ -47,6 +47,80 @@
 
 ---
 
+## 编程练习题
+
+```
+【问题描述】
+
+输入精度e 和实数x,用下列公式求cos x 的近似值,精确到最后一项的绝对值小于e｡要求定义和调用函数funcos(e,x)求余弦函数的近似值｡
+
+
+
+【输入形式】
+
+输入两个浮点数：精度e和实数x
+
+【输入输出样例1】（下划线部分表示输入）
+
+e: 0.001
+
+x: 1
+
+cos(x)=0.540
+
+【样例说明】
+
+输入提示符后要加一个空格。例如&ldquo;e: &rdquo;，其中&ldquo;:&rdquo;后要加一个且只能一个空格。
+
+输出语句的&ldquo;=&rdquo;两边无空格
+
+计算结果保留3位小数
+
+英文字母区分大小写。必须严格按样例输入输出。
+```
+
+```
+#include <stdio.h>
+#include <math.h>
+
+double factorial(int n) {
+	if (n == 1)
+		return 1;
+	return factorial(n - 1) * n;
+}
+
+double funcos(double e, double x);
+
+int main() {
+	double e, x;
+	scanf("%lf %lf", &e, &x);
+	printf("e: x: cos(x)=%.3lf", funcos(e, x));
+	return 0;
+}
+
+double funcos( double e, double x) {
+	int a;
+	double b, c, d;
+	a = 2;
+
+	d = 1;
+	int n = 2;
+	do {
+		b = factorial(n);
+		c = pow(x, a) / b ;
+		if (a % 4 == 0) {
+			d += c;
+		} else if (a % 2 == 0) {
+			d -= c;
+		}
+		a++;
+		n++;
+	} while (c > e);
+	return d;
+
+}
+```
+
 ## Learn C the hard way：
 
 ### 注意事项(目前我遇到的)：
