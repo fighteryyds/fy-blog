@@ -896,3 +896,105 @@ C把你的计算机看成一个庞大的字节数组。
 - 将`ages+i`处的元素转换成大小正确的有效的`int`，这样就返回了你想要的结果：下标`i`处的`int`。
 
 现在访问数组和指针的语法都会翻译成相同的机器码，并且表现一致。由此，你应该每次尽可能使用数组，并且按需将指针用作提升性能的手段。
+
+# 结构体
+
+```
+#include <stdio.h>
+//C 标准库的 assert.h头文件提供了一个名为 assert 的宏，它可用于验证程序做出的假设，并在假设为假时输出诊断消息。
+#include <assert.h>
+//stdlib .h 头文件定义了四个变量类型、一些宏和各种通用工具函数。
+#include <stdlib.h>
+//调用sizeof
+#include <string.h>
+//构造基本的人的结构
+struct Person {
+    char *name;
+    int age;
+    int height;
+    int weight;
+};
+//开始创造人，给人具体定义数据的函数
+struct Person *Person_create(char *name, int age, int height, int weight)
+{
+    struct Person *who = malloc(sizeof(struct Person));
+    assert(who != NULL);
+
+    who->name = strdup(name);
+    who->age = age;	
+    who->height = height;
+    who->weight = weight;
+
+    return who;
+}
+//构造破坏人结构体的函数
+//C 库函数 void free(void *ptr) 释放之前调用 calloc、malloc 或 realloc 所分配的内存空间。
+void Person_destroy(struct Person *who)
+{
+    assert(who != NULL);
+
+    free(who->name);
+    free(who);
+}
+//打印出人的具体信息
+void Person_print(struct Person *who)
+{
+    printf("Name: %s\n", who->name);
+    printf("\tAge: %d\n", who->age);
+    printf("\tHeight: %d\n", who->height);
+    printf("\tWeight: %d\n", who->weight);
+}
+//主函数
+int main(int argc, char *argv[])
+{
+    // make two people structures
+    struct Person *joe = Person_create(
+            "Joe Alex", 32, 64, 140);
+
+    struct Person *frank = Person_create(
+            "Frank Blank", 20, 72, 180);
+
+    // print them out and where they are in memory
+    printf("Joe is at memory location %p:\n", joe);
+    Person_print(joe);
+
+    printf("Frank is at memory location %p:\n", frank);
+    Person_print(frank);
+
+    // make everyone age 20 years and print them again
+    joe->age += 20;
+    joe->height -= 2;
+    joe->weight += 40;
+    Person_print(joe);
+
+    frank->age += 20;
+    frank->weight += 20;
+    Person_print(frank);
+
+    // destroy them both so we clean up
+    Person_destroy(joe);
+    Person_destroy(frank);
+
+    return 0;
+}
+```
+
+![ ](c/1251.jpg)
+
+- malloc用于内存分配
+- assert确保从malloc得到一块有效的内存
+- NULL表示未设置或无效的指针
+- asset大致检查了malloc会不会返回NULL
+- x->y即（*x）.y语法来初始化struct Person的每个成员
+  strdup复制name会确保结构体真正拥有它
+- free用于释放分配的内存空间，相当于删除信息
+
+结构体给我一种先创造出一个模版，然后再创造函数来使用这个模版，再然后直接调用这个函数，只需要简单输入一些参数就可以。
+
+使用了`free`函数来交还通过`malloc`和`strdup`得到的内存。如果你不这么做则会出现“内存泄露”。
+
+内存溢出与泄漏：
+
+- 内存溢出 out of memory**，是指程序在申请内存时，没有足够的内存空间供其使用，出现out of memory；比如申请了一个integer,但给它存了long才能存下的数，那就是内存溢出。内存溢出就是你要求分配的内存超出了系统能给你的，系统不能满足需求，于是产生溢出。
+
+- 内存泄漏是指你向系统申请分配内存进行使用(new)，可是使用完了以后却不归还(delete)，结果你申请到的那块内存你自己也不能再访问（也许你把它的地址给弄丢了），而系统也不能再次将它分配给需要的程序。一个盘子用尽各种方法只能装4个果子，你装了5个，结果掉倒地上不能吃了。这就是溢出！比方说栈，栈满时再做进栈必定产生空间溢出，叫上溢，栈空时再做退栈也产生空间溢出，称为下溢。就是分配的内存不足以放下数据项序列,称为内存溢出.
