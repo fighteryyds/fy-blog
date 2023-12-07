@@ -901,67 +901,41 @@ C把你的计算机看成一个庞大的字节数组。
 
 ```
 #include <stdio.h>
-//C 标准库的 assert.h头文件提供了一个名为 assert 的宏，它可用于验证程序做出的假设，并在假设为假时输出诊断消息。
 #include <assert.h>
-//stdlib .h 头文件定义了四个变量类型、一些宏和各种通用工具函数。
 #include <stdlib.h>
-//调用sizeof
 #include <string.h>
-//构造基本的人的结构
+
+// 定义一个 Person 结构体，表示一个人的信息
 struct Person {
-    char *name;
-    int age;
-    int height;
-    int weight;
+    char *name;  // 人的姓名
+    int age;     // 人的年龄
+    int height;  // 人的身高
+    int weight;  // 人的体重
 };
-//开始创造人，给人具体定义数据的函数
-struct Person *Person_create(char *name, int age, int height, int weight)
-{
-    struct Person *who = malloc(sizeof(struct Person));
-    assert(who != NULL);
 
-    who->name = strdup(name);
-    who->age = age;	
-    who->height = height;
-    who->weight = weight;
+// 函数声明，用于创建一个新的 Person 结构体
+struct Person *Person_create(char *name, int age, int height, int weight);
 
-    return who;
-}
-//构造破坏人结构体的函数
-//C 库函数 void free(void *ptr) 释放之前调用 calloc、malloc 或 realloc 所分配的内存空间。
-void Person_destroy(struct Person *who)
-{
-    assert(who != NULL);
+// 函数声明，用于销毁一个 Person 结构体
+void Person_destroy(struct Person *who);
 
-    free(who->name);
-    free(who);
-}
-//打印出人的具体信息
-void Person_print(struct Person *who)
-{
-    printf("Name: %s\n", who->name);
-    printf("\tAge: %d\n", who->age);
-    printf("\tHeight: %d\n", who->height);
-    printf("\tWeight: %d\n", who->weight);
-}
-//主函数
+// 函数声明，用于打印一个 Person 结构体的信息
+void Person_print(struct Person *who);
+
 int main(int argc, char *argv[])
 {
-    // make two people structures
-    struct Person *joe = Person_create(
-            "Joe Alex", 32, 64, 140);
+    // 创建两个 Person 结构体实例
+    struct Person *joe = Person_create("Joe Alex", 32, 64, 140);
+    struct Person *frank = Person_create("Frank Blank", 20, 72, 180);
 
-    struct Person *frank = Person_create(
-            "Frank Blank", 20, 72, 180);
-
-    // print them out and where they are in memory
+    // 打印它们的信息以及内存中的位置
     printf("Joe is at memory location %p:\n", joe);
     Person_print(joe);
 
     printf("Frank is at memory location %p:\n", frank);
     Person_print(frank);
 
-    // make everyone age 20 years and print them again
+    // 使两人都年龄增加20岁，然后再次打印它们的信息
     joe->age += 20;
     joe->height -= 2;
     joe->weight += 40;
@@ -971,12 +945,52 @@ int main(int argc, char *argv[])
     frank->weight += 20;
     Person_print(frank);
 
-    // destroy them both so we clean up
+    // 销毁两个结构体实例，进行内存清理
     Person_destroy(joe);
     Person_destroy(frank);
 
     return 0;
 }
+
+// 函数定义，用于创建一个新的 Person 结构体
+struct Person *Person_create(char *name, int age, int height, int weight)
+{
+    // 使用 malloc 分配内存来存储一个 Person 结构体的空间
+    struct Person *who = malloc(sizeof(struct Person));
+    assert(who != NULL);  // 检查内存分配是否成功
+
+    // 使用 strdup 复制输入的姓名字符串，并将其分配给 Person 结构体的 name 成员
+    who->name = strdup(name);
+
+    // 将传入的年龄、身高和体重分配给相应的成员变量
+    who->age = age;
+    who->height = height;
+    who->weight = weight;
+
+    return who;
+}
+
+// 函数定义，用于销毁一个 Person 结构体
+void Person_destroy(struct Person *who)
+{
+    assert(who != NULL);  // 检查结构体是否存在
+
+    // 释放姓名字符串的内存
+    free(who->name);
+    
+    // 释放结构体的内存
+    free(who);
+}
+
+// 函数定义，用于打印一个 Person 结构体的信息
+void Person_print(struct Person *who)
+{
+    printf("Name: %s\n", who->name);
+    printf("\tAge: %d\n", who->age);
+    printf("\tHeight: %d\n", who->height);
+    printf("\tWeight: %d\n", who->weight);
+}
+
 ```
 
 ![ ](c/1251.jpg)
@@ -1042,6 +1056,7 @@ free用来释放内存，防止内存泄漏。
 #define MAX_DATA 512
 #define MAX_ROWS 100
 
+// 定义 Address 结构体，表示数据库中的一条记录
 struct Address {
     int id;
     int set;
@@ -1049,172 +1064,87 @@ struct Address {
     char email[MAX_DATA];
 };
 
+// 定义 Database 结构体，表示整个数据库
 struct Database {
     struct Address rows[MAX_ROWS];
 };
 
+// 定义 Connection 结构体，表示与数据库的连接
 struct Connection {
     FILE *file;
     struct Database *db;
 };
 
-void die(const char *message)
-{
-    if(errno) {
-        perror(message);
-    } else {
-        printf("ERROR: %s\n", message);
-    }
+// 函数声明，用于打印错误信息并退出程序
+void die(const char *message);
 
-    exit(1);
-}
+// 函数声明，用于打印一条记录
+void Address_print(struct Address *addr);
 
-void Address_print(struct Address *addr)
-{
-    printf("%d %s %s\n",
-            addr->id, addr->name, addr->email);
-}
+// 函数声明，用于加载数据库内容
+void Database_load(struct Connection *conn);
 
-void Database_load(struct Connection *conn)
-{
-    int rc = fread(conn->db, sizeof(struct Database), 1, conn->file);
-    if(rc != 1) die("Failed to load database.");
-}
+// 函数声明，用于打开数据库连接
+struct Connection *Database_open(const char *filename, char mode);
 
-struct Connection *Database_open(const char *filename, char mode)
-{
-    struct Connection *conn = malloc(sizeof(struct Connection));
-    if(!conn) die("Memory error");
+// 函数声明，用于关闭数据库连接
+void Database_close(struct Connection *conn);
 
-    conn->db = malloc(sizeof(struct Database));
-    if(!conn->db) die("Memory error");
+// 函数声明，用于写入数据库内容
+void Database_write(struct Connection *conn);
 
-    if(mode == 'c') {
-        conn->file = fopen(filename, "w");
-    } else {
-        conn->file = fopen(filename, "r+");
+// 函数声明，用于创建数据库
+void Database_create(struct Connection *conn);
 
-        if(conn->file) {
-            Database_load(conn);
-        }
-    }
+// 函数声明，用于设置数据库中的一条记录
+void Database_set(struct Connection *conn, int id, const char *name, const char *email);
 
-    if(!conn->file) die("Failed to open the file");
+// 函数声明，用于获取数据库中的一条记录
+void Database_get(struct Connection *conn, int id);
 
-    return conn;
-}
+// 函数声明，用于删除数据库中的一条记录
+void Database_delete(struct Connection *conn, int id);
 
-void Database_close(struct Connection *conn)
-{
-    if(conn) {
-        if(conn->file) fclose(conn->file);
-        if(conn->db) free(conn->db);
-        free(conn);
-    }
-}
-
-void Database_write(struct Connection *conn)
-{
-    rewind(conn->file);
-
-    int rc = fwrite(conn->db, sizeof(struct Database), 1, conn->file);
-    if(rc != 1) die("Failed to write database.");
-
-    rc = fflush(conn->file);
-    if(rc == -1) die("Cannot flush database.");
-}
-
-void Database_create(struct Connection *conn)
-{
-    int i = 0;
-
-    for(i = 0; i < MAX_ROWS; i++) {
-        // make a prototype to initialize it
-        struct Address addr = {.id = i, .set = 0};
-        // then just assign it
-        conn->db->rows[i] = addr;
-    }
-}
-
-void Database_set(struct Connection *conn, int id, const char *name, const char *email)
-{
-    struct Address *addr = &conn->db->rows[id];
-    if(addr->set) die("Already set, delete it first");
-
-    addr->set = 1;
-    // WARNING: bug, read the "How To Break It" and fix this
-    char *res = strncpy(addr->name, name, MAX_DATA);
-    // demonstrate the strncpy bug
-    if(!res) die("Name copy failed");
-
-    res = strncpy(addr->email, email, MAX_DATA);
-    if(!res) die("Email copy failed");
-}
-
-void Database_get(struct Connection *conn, int id)
-{
-    struct Address *addr = &conn->db->rows[id];
-
-    if(addr->set) {
-        Address_print(addr);
-    } else {
-        die("ID is not set");
-    }
-}
-
-void Database_delete(struct Connection *conn, int id)
-{
-    struct Address addr = {.id = id, .set = 0};
-    conn->db->rows[id] = addr;
-}
-
-void Database_list(struct Connection *conn)
-{
-    int i = 0;
-    struct Database *db = conn->db;
-
-    for(i = 0; i < MAX_ROWS; i++) {
-        struct Address *cur = &db->rows[i];
-
-        if(cur->set) {
-            Address_print(cur);
-        }
-    }
-}
+// 函数声明，用于列出数据库中所有的记录
+void Database_list(struct Connection *conn);
 
 int main(int argc, char *argv[])
 {
-    if(argc < 3) die("USAGE: ex17 <dbfile> <action> [action params]");
+    // 检查命令行参数是否足够
+    if (argc < 3) die("USAGE: ex17 <dbfile> <action> [action params]");
 
+    // 从命令行参数获取数据库文件名和操作类型
     char *filename = argv[1];
     char action = argv[2][0];
     struct Connection *conn = Database_open(filename, action);
     int id = 0;
 
-    if(argc > 3) id = atoi(argv[3]);
-    if(id >= MAX_ROWS) die("There's not that many records.");
+    // 如果有额外的参数，将其解析为记录的 ID
+    if (argc > 3) id = atoi(argv[3]);
+    if (id >= MAX_ROWS) die("There's not that many records.");
 
-    switch(action) {
+    // 根据操作类型执行相应的操作
+    switch (action) {
         case 'c':
             Database_create(conn);
             Database_write(conn);
             break;
 
         case 'g':
-            if(argc != 4) die("Need an id to get");
+            if (argc != 4) die("Need an id to get");
 
             Database_get(conn, id);
             break;
 
         case 's':
-            if(argc != 6) die("Need id, name, email to set");
+            if (argc != 6) die("Need id, name, email to set");
 
             Database_set(conn, id, argv[4], argv[5]);
             Database_write(conn);
             break;
 
         case 'd':
-            if(argc != 4) die("Need id to delete");
+            if (argc != 4) die("Need id to delete");
 
             Database_delete(conn, id);
             Database_write(conn);
@@ -1227,10 +1157,110 @@ int main(int argc, char *argv[])
             die("Invalid action, only: c=create, g=get, s=set, d=del, l=list");
     }
 
+    // 关闭数据库连接
     Database_close(conn);
 
     return 0;
 }
+
+// 函数定义，用于打印错误信息并退出程序
+void die(const char *message)
+{
+    // 如果 errno 设置，使用 perror 打印详细错误信息，否则只打印错误信息
+    if (errno) {
+        perror(message);
+    } else {
+        printf("ERROR: %s\n", message);
+    }
+
+    // 退出程序
+    exit(1);
+}
+
+// 函数定义，用于打印一条记录
+void Address_print(struct Address *addr)
+{
+    printf("%d %s %s\n", addr->id, addr->name, addr->email);
+}
+
+// 函数定义，用于加载数据库内容
+void Database_load(struct Connection *conn)
+{
+    int rc = fread(conn->db, sizeof(struct Database), 1, conn->file);
+    if (rc != 1) die("Failed to load database.");
+}
+
+// 函数定义，用于打开数据库连接
+struct Connection *Database_open(const char *filename, char mode)
+{
+    // 分配 Connection 结构体的内存
+    struct Connection *conn = malloc(sizeof(struct Connection));
+    if (!conn) die("Memory error");
+
+    // 分配 Database 结构体的内存
+    conn->db = malloc(sizeof(struct Database));
+    if (!conn->db) die("Memory error");
+
+    // 根据打开模式选择打开文件
+    if (mode == 'c') {
+        conn->file = fopen(filename, "w");
+    } else {
+        conn->file = fopen(filename, "r+");
+
+        if (conn->file) {
+            // 如果是读写模式，加载数据库内容
+            Database_load(conn);
+        }
+    }
+
+    // 检查文件是否成功打开
+    if (!conn->file) die("Failed to open the file");
+
+    return conn;
+}
+
+// 函数定义，用于关闭数据库连接
+void Database_close(struct Connection *conn)
+{
+    // 检查 Connection 结构体是否存在
+    if (conn) {
+        // 如果文件存在，关闭文件
+        if (conn->file) fclose(conn->file);
+        // 如果数据库结构体存在，释放内存
+        if (conn->db) free(conn->db);
+        // 释放 Connection 结构体的内存
+        free(conn);
+    }
+}
+
+// 函数定义，用于写入数据库内容
+void Database_write(struct Connection *conn)
+{
+    // 将文件指针定位到文件开头
+    rewind(conn->file);
+
+    // 将整个数据库结构体写入文件
+    int rc = fwrite(conn->db, sizeof(struct Database), 1, conn->file);
+    if (rc != 1) die("Failed to write database.");
+
+    // 刷新文件缓冲区
+    rc = fflush(conn->file);
+    if (rc == -1) die("Cannot flush database.");
+}
+
+// 函数定义，用于创建数据库
+void Database_create(struct Connection *conn)
+{
+    int i = 0;
+
+    // 遍历数据库中的所有记录，初始化为未设置状态
+    for (i = 0; i < MAX_ROWS; i++) {
+        // 创建 Address 结构体的原型以进行初始化
+        struct Address addr = {.id = i, .set = 0};
+        // 直接赋值
+        conn->db->rows[i] = addr;
+    }
+
 ```
 
 ![ ](c/1262.jpg)
@@ -1241,4 +1271,12 @@ int main(int argc, char *argv[])
 
 3.在创建Database时使用堆传递需要再各处共享的东西。
 
-4.数据库里边不是一个指针，里边其实有一个完整的地址元素数组`struct Database {structure Address rows[MAX_ROWS]}`MAX_ROWS是100，就会有100个地址，每个地址有512大小的字符和512大小的email,也就是100*512，再加上俩个int，这是很大的一块内存数据，不是malloc，
+4.数据库里边不是一个指针，里边其实有一个完整的地址元素数组`struct Database {structure Address rows[MAX_ROWS]}`MAX_ROWS是100，就会有100个地址，每个地址有512大小的字符和512大小的email,也就是100*512，再加上俩个int，这是很大的一块内存数据。
+
+5.嵌套结构体指针
+
+```
+db->conn->row + i
+```
+
+它读作“读取`db`中的`conn`中的`rows`的第`i`个元素
