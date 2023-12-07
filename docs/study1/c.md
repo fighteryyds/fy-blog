@@ -986,8 +986,29 @@ int main(int argc, char *argv[])
 - NULL表示未设置或无效的指针
 - asset大致检查了malloc会不会返回NULL
 - x->y即（*x）.y语法来初始化struct Person的每个成员
-  strdup复制name会确保结构体真正拥有它
-- free用于释放分配的内存空间，相当于删除信息
+
+### 12月7号补充内容：
+
+![ ](c/1271.jpg)
+
+- <mark>who->name也可以用*who.name来代替</mark>（12.7）
+- <mark>12月7日对终于加深了指针的原理的理解，struct Person *who = malloc(sizeof(struct Person)); #这里的*号其实就可以看作是指针pointer类型，后面是用malloc来请求的一块地址，让这个指针来指向这块内存，这块内存的大小就是`struct Person`里面包含的各个数据类型的大小的总和，一个char加上三个int.</mark>
+
+- ```c
+  struct Person *Person_create(char *name, int age, int height, int weight)   
+  ```
+
+​     这块代码其实创造了一个函数。
+
+```c
+who->name = strdup(name);
+```
+
+这块访问了name并使用strduo来使name获得name数组的内容，之所以它不想age,height,weight那样，是因为它是一个数组，本质是指针，不存在string这样字符串的数据类型，数组其实只存储了第一个字符的地址，然后通过不断的递增访问来获取剩下的内容，直到读取NULL也就是'/0'
+
+free用来释放内存，防止内存泄漏。
+
+
 
 结构体给我一种先创造出一个模版，然后再创造函数来使用这个模版，再然后直接调用这个函数，只需要简单输入一些参数就可以。
 
