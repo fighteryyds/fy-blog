@@ -1384,7 +1384,7 @@ die("Memory error."); 是在发生内存分配错误时调用的函数。die 函
 
 因此，这行代码的含义是：如果动态分配内存失败（target 是空指针），则打印 "Memory error." 错误消息并终止程序运行。这是一种常见的处理动态内存分配错误的方式。
 
-6.`memcpy`函数
+6.`memcpy`复制函数
 
 ```
 int count = argc - 1;
@@ -1400,3 +1400,39 @@ memcpy(target, numbers, count * sizeof(int));
 - `count * sizeof(int)` 表示要复制的字节数。`count` 是数组中元素的数量，`sizeof(int) `是一个 int 类型的元素占用的字节数。因此，`count * sizeof(int)` 表示整个数组的字节数。
 
 - 因此，这行代码的含义是：将从 numbers 数组开始的一段内存块（总共 `count * sizeof(int) `字节）复制到` target `数组开始的位置。这通常用于初始化一个新的数组，使其包含与另一个数组相同的数据。
+
+7.测试排序的函数
+
+```
+void test_sorting(int *numbers, int count, compare_cb cmp)
+{
+    // 用 bubble_sort 函数对数组进行排序，返回排序后的数组
+    int *sorted = bubble_sort(numbers, count, cmp);
+
+    // 检查排序结果是否成功
+    if (!sorted) {
+        die("Failed to sort as requested.");
+    }
+
+    // 打印排序后的数组
+    for (int i = 0; i < count; i++) {
+        printf("%d ", sorted[i]);
+    }
+    printf("\n");
+
+    // 释放排序后的数组占用的内存
+    free(sorted);
+}
+```
+
+`bubble_sort(numbers, count, cmp)：`调用 `bubble_sort` 函数，对传入的 `numbers` 数组进行排序。`cmp` 参数是一个函数指针，用于指定排序的比较方式。
+
+`int *sorted = ...：`将排序后的数组保存在 `sorted` 指针中。
+
+`if (!sorted)：`检查排序是否成功。如果 `sorted` 是空指针，表示排序失败，调用 die 函数打印错误消息并终止程序。
+
+`for (int i = 0; i < count; i++)：`遍历排序后的数组，并使用 `printf` 打印每个元素。
+
+`free(sorted)：`释放排序后的数组占用的内存，以避免内存泄漏。
+
+这个函数的目的是通过调用 `bubble_sort` 对输入的数组进行排序，然后打印排序后的结果。如果排序失败（例如，由于内存分配问题），则程序会终止并打印错误消息。这是一个通用的测试排序函数，可以用于测试不同的排序算法和不同的比较方式。
