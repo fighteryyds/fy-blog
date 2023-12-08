@@ -1436,3 +1436,78 @@ void test_sorting(int *numbers, int count, compare_cb cmp)
 `free(sorted)：`释放排序后的数组占用的内存，以避免内存泄漏。
 
 这个函数的目的是通过调用 `bubble_sort` 对输入的数组进行排序，然后打印排序后的结果。如果排序失败（例如，由于内存分配问题），则程序会终止并打印错误消息。这是一个通用的测试排序函数，可以用于测试不同的排序算法和不同的比较方式。
+
+### 8.如何实现的以从小到大，从大到小，和以奇怪的方式排列
+
+整个程序通过使用冒泡排序算法实现了升序和降序排序。冒泡排序是一种简单的排序算法，它多次遍历要排序的列表，依次比较相邻的两个元素，如果它们的顺序不符合要求（升序或降序），则交换它们，直到整个列表排序完成。
+
+以下是冒泡排序的核心部分，即 bubble_sort 函数的关键代码：
+
+```
+int *bubble_sort(int *numbers, int count, compare_cb cmp)
+{
+    int temp = 0;
+    int i = 0;
+    int j = 0;
+    int *target = malloc(count * sizeof(int));
+
+    if (!target) die("Memory error.");
+
+    memcpy(target, numbers, count * sizeof(int));
+
+    for (i = 0; i < count; i++) {
+        for (j = 0; j < count - 1; j++) {
+            if (cmp(target[j], target[j + 1]) > 0) {
+                temp = target[j + 1];
+                target[j + 1] = target[j];
+                target[j] = temp;
+            }
+        }
+    }
+
+    return target;
+}
+```
+
+`cmp` 参数是一个函数指针，用于指定比较两个元素的规则，即升序排序的规则或降序排序的规则。
+
+内部的嵌套循环用于多次遍历数组，比较并交换相邻的元素，直到整个数组有序。
+
+`if (cmp(target[j], target[j + 1]) > 0)` 表示如果按照比较规则 `cmp`，target[j] 大于 `target[j + 1]`，则进行交换，从而实现升序或降序排序。
+
+整个程序在调用 `test_sorting` 函数时，<mark>传递了不同的比较函数参数（sorted_order 或 reverse_order），从而在打印排序结果时实现了升序或降序排序。</mark>
+
+那么什么是比较函数呢？它到底是如何影响的排序呢？
+
+在这个程序中，通过传递不同的比较函数参数，影响到了排序算法的行为。这是因为排序算法需要知道如何比较两个元素的大小以确定它们的相对顺序。
+
+具体来说，影响排序结果的是在 `bubble_sort` 函数中的比较部分，即以下代码：
+
+```
+if (cmp(target[j], target[j + 1]) > 0) {
+    temp = target[j + 1];
+    target[j + 1] = target[j];
+    target[j] = temp;
+}
+```
+
+```
+test_sorting(numbers, count, sorted_order);   // 升序排序
+test_sorting(numbers, count, reverse_order);  // 降序排序
+```
+
+```
+int sorted_order(int a, int b)
+{return a - b;}
+int reverse_order(int a, int b)
+{return b - a;}
+```
+
+最具体一点就是`if (cmp(target[j], target[j + 1]) > 0)`,你可以看到这是一个条件，其中的`target[j]`就代表了比较函数中的参数`a`,同理`target[j+1]`代表了`b`,那么假设使用了`sorted_order`升序排序，你会发现，如果用`a-b`大于0，返回正数，那么这个条件就会为真，那么就会进行换位，从而实现了从小到大的排序结果。
+
+这里的 `cmp` 是一个函数指针，指向一个比较函数。该比较函数根据特定的规则返回一个整数值，表示两个元素的相对顺序。具体而言：
+
+如果比较函数返回正数，表示第一个元素大于第二个元素。
+如果比较函数返回负数，表示第一个元素小于第二个元素。
+如果比较函数返回零，表示两个元素相等。
+因此，通过传递不同的比较函数，可以改变排序算法中的比较规则，从而实现升序、降序或其他特定的排序方式。
