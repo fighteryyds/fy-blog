@@ -1511,3 +1511,138 @@ int reverse_order(int a, int b)
 如果比较函数返回负数，表示第一个元素小于第二个元素。
 如果比较函数返回零，表示两个元素相等。
 因此，通过传递不同的比较函数，可以改变排序算法中的比较规则，从而实现升序、降序或其他特定的排序方式。
+
+## C预处理器如何工作
+
+### 1.`OOP`语言：
+
+`"OOP"` 代表面向对象编程（Object-Oriented Programming）。`OOP` 是一种程序设计范 `paradigma`，它将程序的结构组织为对象，每个对象包含数据和与之相关的操作。面向对象编程强调对象的概念，它们是程序中的基本单元，可以封装数据和行为。
+
+主要的面向对象编程的特征包括：
+
+封装（Encapsulation）： 封装是指将数据和操作数据的方法捆绑在一起，形成一个单独的单元。这样，对象的内部细节对外部是不可见的，只有通过对象的公共接口才能访问对象的功能。
+
+继承（Inheritance）： 继承是一种机制，允许一个对象（子类/派生类）基于另一个对象（父类/基类）进行构建。子类可以继承父类的属性和方法，并且可以通过扩展或修改继承的功能。
+
+多态（Polymorphism）： 多态性是指同一种操作可以在不同的对象上有不同的行为。它允许使用同样的方法名调用不同对象的方法，具体执行的方法由对象的实际类型决定。
+
+主要的面向对象编程语言包括：
+
+`Java`： 一种跨平台的面向对象编程语言，广泛用于企业级应用和移动应用开发。
+
+`C++`： 是C语言的扩展，支持面向对象编程和一些其他特性。
+
+`C#`： 由Microsoft开发，专门为.NET平台设计，支持面向对象编程。
+
+`Python`： 一种通用编程语言，支持多种编程范 paradigma，包括面向对象编程。
+
+`Ruby`： 一种动态、面向对象的编程语言，注重简洁和开发人员的幸福感。
+
+`Swift`： 由Apple开发，用于`iOS`和`MacOS`应用程序开发，支持面向对象编程。
+
+面向对象编程有助于提高代码的可重用性、可维护性和扩展性，使得软件开发更加灵活和模块化。
+
+### 2.`Object`头文件结构
+
+```
+#ifndef _object_h
+#define _object_h
+
+// 枚举类型表示方向
+typedef enum {
+    NORTH, SOUTH, EAST, WEST
+} Direction;
+
+// 定义通用的 Object 结构
+typedef struct {
+    char *description;
+    int (*init)(void *self);         // 初始化方法
+    void (*describe)(void *self);    // 描述方法
+    void (*destroy)(void *self);      // 销毁方法
+    void *(*move)(void *self, Direction direction);  // 移动方法
+    int (*attack)(void *self, int damage);          // 攻击方法
+} Object;
+
+// Object 结构的初始化方法
+int Object_init(void *self);
+
+// Object 结构的销毁方法
+void Object_destroy(void *self);
+
+// Object 结构的描述方法
+void Object_describe(void *self);
+
+// Object 结构的移动方法
+void *Object_move(void *self, Direction direction);
+
+// Object 结构的攻击方法
+int Object_attack(void *self, int damage);
+
+// 创建新的 Object 实例的函数
+void *Object_new(size_t size, Object proto, char *description);
+
+// 宏定义，用于创建新的 Object 实例
+#define NEW(T, N) Object_new(sizeof(T), T##Proto, N)
+#define _(N) proto.N
+
+#endif
+```
+
+`Direction` 枚举类型定义了四个方向：`NORTH`、`SOUTH`、`EAST`、`WEST`。
+
+`Object` 结构定义了一个通用的对象，包含了一些通用的属性和方法。这是一个泛型的框架，实际的对象可以通过继承这个框架来实现自己的特定行为。
+
+定义了一些函数指针作为 `Object` 结构中的方法，例如 `init`、`describe`、`destroy`、`move`、`attack`。
+
+提供了一些操作 `Object` 结构的函数，如初始化、销毁、描述、移动、攻击等。
+
+`Object_new` 函数用于创建新的 `Object` 实例，接受实例的大小、原型（`proto`）、描述信息为参数。
+
+NEW 宏用于创建新的对象实例，它接受类型（T）和描述信息（N），并调用 `Object_new` 函数。
+
+`_(N)` 宏用于获取原型中的成员。这里假定 `proto` 是一个 Object 结构的实例。
+
+总体来说，这个框架提供了一个简单的面向对象的结构，可以作为其他对象的基础。在创建实例时，通过调用 NEW 宏，可以方便地初始化对象并获取实例。
+
+### 3.`enum`(枚举)
+
+枚举是 C 语言中的一种基本数据类型，用于定义一组具有离散值的常量，它可以让数据更简洁，更易读。
+
+枚举类型通常用于为程序中的一组相关的常量取名字，以便于程序的可读性和维护性。
+
+定义一个枚举类型，需要使用 `enum` 关键字，后面跟着枚举类型的名称，以及用大括号 {} 括起来的一组枚举常量。每个枚举常量可以用一个标识符来表示，也可以为它们指定一个整数值，如果没有指定，那么默认从 0 开始递增。
+
+枚举语法定义格式为：
+
+```
+enum　枚举名　{枚举元素1,枚举元素2,……};
+```
+
+4.枚举类型别名：
+
+Direction 枚举类型别名：
+
+```
+typedef enum {
+    NORTH, SOUTH, EAST, WEST
+} Direction;
+```
+
+这里使用 typedef 定义了一个新的类型别名 Direction，它代表了一个枚举类型，包含了四个方向。之后，你可以直接使用 Direction 来声明变量，而不必写出完整的 `enum` 定义。
+
+Object 结构类型别名：
+
+```
+typedef struct {
+    char *description;
+    int (*init)(void *self);
+    void (*describe)(void *self);
+    void (*destroy)(void *self);
+    void *(*move)(void *self, Direction direction);
+    int (*attack)(void *self, int damage);
+} Object;
+```
+
+同样地，这里使用 typedef 定义了一个新的类型别名 Object，它代表了一个结构体类型，包含了描述、初始化、描述、销毁、移动和攻击等属性和方法。之后，你可以直接使用 Object 来声明变量，而不必写出完整的结构体定义。
+
+typedef 的主要作用是提高代码的可读性和可维护性，通过引入更具表达性的名称，使代码更加清晰。在这个代码中，使用 typedef 让枚举类型和结构体类型的声明更加简洁，使代码更易理解。
