@@ -1,4 +1,4 @@
-### 十进制与二进制：
+十进制与二进制：
 
 ```
 【问题描述】
@@ -1823,3 +1823,252 @@ C通过返回错误码或设置全局的`errno`值来解决这些问题，并且
 #else: 如果没有定义 `NDEBUG`，则执行下面的代码。
 
 `#define debug(M, ...) fprintf(stderr, "DEBUG %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)`: 如果没有定义 `NDEBUG`，则将 debug 宏定义为一个输出调试信息的操作。这个操作使用了 `fprintf` 函数，将调试信息输出到标准错误流 `stderr`。具体的调试信息格式为 "DEBUG 文件名:行号: 信息"，其中 `__FILE__` 和` __LINE__` 是预定义的宏，分别表示当前文件名和行号。`##__VA_ARGS__` 表示将可变参数展开，并插入到格式字符串中。
+
+代码分析：
+
+1.包含头文件：
+
+```
+#include "dbg.h"
+#include <stdlib.h>
+#include <stdio.h>
+```
+
+`"dbg.h"` 包含了调试宏，你可以查看这个头文件的内容以了解它的实现。
+`<stdlib.h>` 包含了动态内存分配和其他一些杂项的标准库函数。
+`<stdio.h>` 包含了输入输出函数。
+
+2.定义测试调试宏的函数：
+
+```
+void test_debug()
+{
+    // notice you don't need the \n
+    debug("I have Brown Hair.");
+
+    // passing in arguments like printf
+    debug("I am %d years old.", 37);
+}
+```
+
+`debug` 宏用于输出调试信息，类似于 `printf`，但无需在末尾添加换行符。
+
+3.定义测试错误日志宏的函数：
+
+```
+void test_log_err()
+{
+    log_err("I believe everything is broken.");
+    log_err("There are %d problems in %s.", 0, "space");
+}
+```
+
+`log_err` 宏用于记录错误信息。
+
+4.定义测试警告日志宏的函数：
+
+```
+void test_log_warn()
+{
+    log_warn("You can safely ignore this.");
+    log_warn("Maybe consider looking at: %s.", "/etc/passwd");
+}
+```
+
+`log_warn` 宏用于记录警告信息。
+
+5.定义测试信息日志宏的函数：
+
+```
+void test_log_info()
+{
+    log_info("Well I did something mundane.");
+    log_info("It happened %f times today.", 1.3f);
+}
+```
+
+`log_info` 宏用于记录一般信息
+
+6.定义一个检查内存分配和文件打开的函数：
+
+```
+int test_check(char *file_name)
+{
+    FILE *input = NULL;
+    char *block = NULL;
+
+    block = malloc(100);
+    check_mem(block); // 检查内存分配是否成功
+
+    input = fopen(file_name,"r");
+    check(input, "Failed to open %s.", file_name); // 检查文件打开是否成功
+
+    free(block);
+    fclose(input);
+    return 0;
+
+error:
+    if(block) free(block);
+    if(input) fclose(input);
+    return -1;
+}
+```
+
+`check_mem` 宏用于检查内存分配是否成功。
+`check` 宏用于检查函数返回值，如果返回值为 `NULL` 或者 `0`，则跳转到 `error` 标签处。
+
+7.定义一个测试带有哨兵值的函数：
+
+```
+int test_sentinel(int code)
+{
+    char *temp = malloc(100);
+    check_mem(temp);
+
+    switch(code) {
+        case 1:
+            log_info("It worked.");
+            break;
+        default:
+            sentinel("I shouldn't run.");
+    }
+
+    free(temp);
+    return 0;
+
+error:
+    if(temp) free(temp);
+    return -1;
+}
+```
+
+sentinel 宏用于标记不应该运行到的代码块。
+
+8.定义一个测试检查内存分配的函数：
+
+```
+int test_check_mem()
+{
+    char *test = NULL;
+    check_mem(test); // 检查内存分配是否成功
+
+    free(test);
+    return 1;
+
+error:
+    return -1;
+}
+```
+
+9.定义一个测试检查调试宏的函数：
+
+```
+int test_check_debug()
+{
+    int i = 0;
+    check_debug(i != 0, "Oops, I was 0."); // 检查调试条件是否为真
+
+    return 0;
+error:
+    return -1;
+}
+```
+
+10.主函数，进行各种测试：
+
+```
+int main(int argc, char *argv[])
+{
+    check(argc == 2, "Need an argument.");
+
+    test_debug();
+    test_log_err();
+    test_log_warn();
+    test_log_info();
+
+    check(test_check("ex20.c") == 0, "failed with ex20.c");
+    check(test_check(argv[1]) == -1, "failed with argv");
+    check(test_sentinel(1) == 0, "test_sentinel failed.");
+    check(test_sentinel(100) == -1, "test_sentinel failed.");
+    check(test_check_mem() == -1, "test_check_mem failed.");
+    check(test_check_debug() == -1, "test_check_debug failed.");
+
+    return 0;
+
+error:
+    return 1;
+}
+```
+
+主函数进行了一系列的测试，使用了之前定义的各种宏和函数。`check` 和 `sentinel` 宏在发生错误时会跳转到 `error` 标签处，进行错误处理。
+
+工作原理：
+
+假设有一个函数叫做`dosomething()`，执行成功是返回0，发生错误时返回-1。每次调用`dosomething`的时候，都要检查错误码，所以将代码写成这样：
+
+```
+int rc = dosomething();
+
+if(rc != 0) {
+    fprintf(stderr, "There was an error: %s\n", strerror());
+    goto error;
+}
+```
+
+- 在这段代码中，`strerror() `是一个函数，用于将标准错误代码转换为相应的错误消息字符串。它接受一个整数参数，通常是系统调用或库函数返回的错误码，然后返回一个指向描述错误消息的字符串的指针。
+
+- 在这个特定的上下文中，`strerror()` 用于获取与错误码 `rc` 相关的错误消息。如果 `dosomething() `函数返回的错误码 `rc` 不为零，说明发生了错误，然后使用 `strerror()` 将错误码转换为相应的错误消息字符串，然后通过 `fprintf` 将错误消息输出到标准错误流（`stderr`）。这有助于在程序出错时提供更有用的错误信息。
+
+<mark>使用预处理器做的是，将这个`if`语句封装为更可读并且便于记忆的一行代码。于是可以使用这个`check`来执行`dbg.h`中的宏所做的事情：</mark>
+
+```
+int rc = dosomething();
+check(rc == 0, "There was an error.");
+```
+
+这样更加简洁，并且恰好解释了所做的事情：检查函数是否正常工作，如果没有就报告错误。我们需要一些特别的预处理器“技巧”来完成它，这些技巧使预处理器作为代码生成工具更加易用。再次看看`check`和`log_err`宏：
+
+```
+1|#define log_err(M, ...) fprintf(stderr, "[ERROR] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
+2|#define check(A, M, ...) if(!(A)) { log_err(M, ##__VA_ARGS__); errno=0; goto error; }
+```
+
+第一个宏，`log_err`更简单一些，只是将它自己替换为`fprintf`对`stderr`的调用。这个宏唯一的技巧性部分就是在`log_err(M, ...)`的定义中使用`...`。它所做的是让你向宏传入可变参数，从而传入`fprintf`需要接收的参数。它们是如何注入`fprintf`的呢？观察末尾的`##__VA_ARGS__`，它告诉预处理器将`...`所在位置的参数注入到`fprintf`调用的相应位置。于是你可以像这样调用了：
+
+```
+log_err("Age: %d, name: %s", age, name);
+```
+
+`age, name`参数就是`...`所定义的部分，这些参数会被注入到`fprintf`中，输出会变成：
+
+```
+fprintf(stderr, "[ERROR] (%s:%d: errno: %s) Age %d: name %d\n",
+    __FILE__, __LINE__, clean_errno(), age, name);
+```
+
+在这段代码中，`fprintf` 函数用于将格式化的错误信息输出到标准错误流（`stderr`）。下面是占位符的含义：
+
+%s：表示字符串。在这里，它分别被替换为 `__FILE__`，`clean_errno()`，`__LINE__`，表示源文件名、清理后的错误码字符串、以及代码行号。
+%d：表示整数。在这里，它分别被替换为 `age` 和 `name`，表示年龄和名称。
+
+`clean_errno()`：这是一个函数调用，用于获取清理后的错误码字符串。它是自定义的函数，用于提供更具可读性的错误信息。
+因此，`fprintf `将按照给定的格式将这些值输出到标准错误流。这样的输出对于调试和错误报告非常有用，因为它提供了有关错误发生位置、错误码以及其他相关信息的详细信息。
+
+- 看到末尾的`age, name`了吗？这就是`...`和`##__VA_ARGS__`的工作机制，在调用其它变参宏（或者函数）的时候它会起作用。观察`check`宏调用`log_err`的方式，它也是用了`...`和`##__VA_ARGS__`。这就是传递整个`printf`风格的格式字符串给`check`的途径，它之后会传给`log_err`，二者的机制都像`printf`一样。
+
+  下一步是学习`check`如何为错误检查构造`if`语句，如果我们剖析`log_err`的用法，我们会得到：
+
+```
+if(!(A)) { errno=0; goto error; }
+```
+
+它的意思是，如果`A`为假，则重置`errno`并且调用`error`标签。`check`宏会被上述`if`语句·替换，所以如果我们手动扩展`check(rc == 0, "There was an error.")`，我们会得到：
+
+```
+if(!(rc == 0)) {
+    log_err("There was an error.");
+    errno=0;
+    goto error;
+```
+
+在这两个宏的展开过程中，预处理器会将宏替换为它的定义的扩展版本，并且递归地来执行这个步骤，扩展宏定义中的宏。预处理器是个递归的模板系统。它的强大来源于使用参数化的代码来生成整个代码块，这使它成为便利的代码生成工具。
