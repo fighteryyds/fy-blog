@@ -1692,6 +1692,16 @@ attack（攻击函数指针）:
 
 C预处理器的工作原理是，如果你给它一个文件，比如`.c`文件，它会处理以`#`（井号）字符开头的各种文本。当它遇到一个这样的文本时，它会对输入文件中的文本做特定的替换。C预处理器的主要优点是他可以包含其他文件，并且基于该文件的内容对它的宏列表进行扩展。
 
+```
+#ifndef _object_h
+#define _object_h
+```
+
+`#ifndef _object_h` 表示 "if not defined"，如果 _object_h 这个宏没有被定义过，那么执行接下来的代码。
+`#define _object_h` 定义了宏 _object_h，这样下次再遇到 `#ifndef _object_h` 的时候，就会发现 _object_h 已经定义了，就会跳过后面的代码，从而防止重复定义。
+最后的 `#endif `表示条件编译的结束。
+这个机制保证了头文件只会被包含一次，避免了重复定义的问题。每个头文件都应该使用类似的头文件保护机制，以确保在编译时不会出现问题。
+
 ### 实现游戏（激动激动激动！）来之不易：
 
 在练习19中整个示例程序是一个游戏程序，你需要创建5个文件来实现这个游戏：分别是`object.h`、`obejct.c`、`ex19.h`、`ex19.c`、`Makefile`
@@ -1721,4 +1731,95 @@ clean:
 
 ## 调试宏
 
-![ ](c/12111.png)
+![ ](c/12111.png)（前言 )C的错误处理问题:
+
+C通过返回错误码或设置全局的`errno`值来解决这些问题，并且你需要检查这些值。这种机制可以检查现存的复杂代码中，你执行的东西是否发生错误。当你编写更多的C代码时，你应该按照下列模式：
+
+- 调用函数。
+- 如果返回值出现错误（每次都必须检查）。
+- 清理创建的所有资源。
+- 打印出所有可能有帮助的错误信息。
+
+这意味着对于每一个函数调用（是的，每个函数）你都可能需要多编写3~4行代码来确保它正常功能。这些还不包括清理你到目前创建的所有垃圾。如果你有10个不同的结构体，3个方式。和一个数据库链接，当你发现错误时你应该写额外的14行。
+
+之前这并不是个问题，因为发生错误时，C程序会像你以前做的那样直接退出。你不需要清理任何东西，因为OS会为你自动去做。然而现在很多C程序需要持续运行数周、数月或者数年，并且需要优雅地处理来自于多种资源的错误。你并不能仅仅让你的服务器在首次运行就退出，你也不能让你写的库使使用它的程序退出。这非常糟糕。
+
+它语言通过异常来解决这个问题，但是这些问题也会在C中出现（其它语言也一样）。在C中你只能够返回一个值，但是异常是基于栈的返回系统，可以返回任意值。C语言中，尝试在栈上模拟异常非常困难，并且其它库也不会兼容。
+
+调试宏（主角）：
+
+以上问题的解决方案->使用一系列“调试宏”，它们在C中实现了基本的调试和错误处理系统。这个系统非常易于理解，兼容于每个库，并且使C代码更加健壮和简洁。
+
+它通过实现一系列转换来处理错误，任何时候发生了错误，你的函数都会跳到执行清理和返回错误代码的“error:”区域。你可以使用`check`宏来检查错误代码，打印错误信息，然后跳到清理区域。你也可以使用一系列日志函数来打印出有用的调试信息。
+
+现在展示目前所见过的，最强大且卓越的代码的全部内容:
+
+```
+#ifndef __dbg_h__
+#define __dbg_h__
+
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+
+#ifdef NDEBUG
+#define debug(M, ...)
+#else
+#define debug(M, ...) fprintf(stderr, "DEBUG %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#endif
+
+#define clean_errno() (errno == 0 ? "None" : strerror(errno))
+
+#define log_err(M, ...) fprintf(stderr, "[ERROR] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
+
+#define log_warn(M, ...) fprintf(stderr, "[WARN] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
+
+#define log_info(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+
+#define check(A, M, ...) if(!(A)) { log_err(M, ##__VA_ARGS__); errno=0; goto error; }
+
+#define sentinel(M, ...)  { log_err(M, ##__VA_ARGS__); errno=0; goto error; }
+
+#define check_mem(A) check((A), "Out of memory.")
+
+#define check_debug(A, M, ...) if(!(A)) { debug(M, ##__VA_ARGS__); errno=0; goto error; }
+
+#endif
+```
+
+将它写在`dbg.h`文件中
+
+使用格式：
+
+```
+#ifdef MACRO_NAME
+    // 这部分代码只有在 MACRO_NAME 被定义时才会编译
+#endif
+```
+
+```
+#ifndef HEADER_FILE_H
+#define HEADER_FILE_H
+
+// 头文件的内容
+
+#endif
+```
+
+解释部分代码：
+
+```
+#ifdef NDEBUG
+#define debug(M, ...)
+#else
+#define debug(M, ...) fprintf(stderr, "DEBUG %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#endif
+```
+
+`#ifdef NDEBUG:` 这是一个条件编译指令，如果定义了 `NDEBUG` 宏（通常是通过编译器选项 -`DNDEBUG` 定义的），则执行下面的代码，否则跳过。
+
+`#define debug(M, ...)`: 如果定义了 `NDEBUG`，则将 debug 宏替换为一个空操作，即不执行任何代码。这是通过空操作 `##__VA_ARGS__·`实现的，表示将宏参数中的可变参数部分展开，如果没有可变参数，就什么都不做。
+
+#else: 如果没有定义 `NDEBUG`，则执行下面的代码。
+
+`#define debug(M, ...) fprintf(stderr, "DEBUG %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)`: 如果没有定义 `NDEBUG`，则将 debug 宏定义为一个输出调试信息的操作。这个操作使用了 `fprintf` 函数，将调试信息输出到标准错误流 `stderr`。具体的调试信息格式为 "DEBUG 文件名:行号: 信息"，其中 `__FILE__` 和` __LINE__` 是预定义的宏，分别表示当前文件名和行号。`##__VA_ARGS__` 表示将可变参数展开，并插入到格式字符串中。
