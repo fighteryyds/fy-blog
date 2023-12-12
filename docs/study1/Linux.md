@@ -532,7 +532,7 @@ Arch Linux 拥有强大的功能，但因其特殊的理念使得用户不易使
 
 ![ ](Linux/12121.jpg)
 
-最后就是另一种方式，打开wsl2,利用windows的子系统，在微软商店中获取Ubuntu，这个比较方便，但是我感觉没有虚拟机那样给人一种同时使用双系统的感觉。（by another good friend's help）
+最后就是另一种方式，打开wsl2,利用windows的子系统，在微软商店中获取Ubuntu，这个比较方便，但是我感觉没有虚拟机那样给人一种同时使用双系统的感觉。（by another good friend's help）使用子系统的另一优势是可以很便利的获得多种Linux发行版，体验一下不同的Linux风格，比如arch和fedora
 
 ![ ](Linux/12122.jpg)
 
