@@ -2620,3 +2620,7 @@ continue   #跳到循环尾。
   
 goto       #跳到你已经放置label的位置，已经在dbg.h中看到它了，用于跳到error标签。
 ```
+
+```
+goto到标签用法：
+if(!(A)) { errno=0; goto error; }   #练习20调试宏
