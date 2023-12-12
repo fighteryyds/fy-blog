@@ -34,7 +34,7 @@ nav:
     - Linux: study1/Linux.md
     - c语言: study1/c.md
     - 文章: study1/article.md
-    - 生活: study1/book.md
+    - 书籍: study1/book.md
 plugins:
   - mermaid2:
       arguments:
