@@ -2624,3 +2624,100 @@ goto       #跳到你已经放置label的位置，已经在dbg.h中看到它了�
 ```
 goto到标签用法：
 if(!(A)) { errno=0; goto error; }   #练习20调试宏
+
+```
+
+## 栈、作用域和全局
+
+![ ](c/12141.png)
+
+<mark>extern</mark>
+
+```
+extern int THE_SIZE;
+```
+
+这个关键词告诉编译器“这个变量已存在，但是他在别的‘外部区域’里”。通常它的意思是一个`.c`文件要用到另一个`.c`文件中定义的变量。这种情况下，我们可以说`ex22.c`中的`THE_SIZE`变量能被`ex22_main.c`访问到。
+
+<mark>static（文件）</mark>
+
+```
+static int THE_AGE = 37;
+```
+
+这个关键词某种意义上是`extern`的反义词，意思是这个变量只能在当前的`.c`文件中使用，程序的其它部分不可访问。要记住文件级别的`static`（比如这里的`THE_AGE`）和其它位置不同。
+
+<mark>static（函数）</mark>
+
+如果你使用`static`在函数中声明变量，它和文件中的`static`定义类似，但是只能够在该函数中访问。它是一种创建某个函数的持续状态的方法，但事实上它很少用于现代的C语言，因为它们很难和线程一起使用。
+
+实际这次的练习讲的就是全局变量和局部变量，其中最重要的就是以下几点：
+
+```
+void scope_demo(int count)
+{
+    log_info("count is: %d", count);
+
+    if(count > 10) {
+        int count = 100;  // BAD! BUGS!
+
+        log_info("count in this scope is %d", count);
+    }
+
+    log_info("count is at exit: %d", count);
+
+    count = 3000;
+
+    log_info("count after assign: %d", count);
+}
+```
+
+这段代码里的if()语句开启了一下属于自己的作用域，在这个语句里的变量，属于局部变量，出了这个循环count该是多少还是多少。
+
+```
+int count = 4;
+    scope_demo(count);
+    scope_demo(count * 20);
+
+    log_info("count after calling scope_demo: %d", count);
+
+    return 0;
+}
+```
+
+输出：
+
+```
+[INFO] (ex22_main.c:8) count is: 4
+[INFO] (ex22_main.c:16) count is at exit: 4
+[INFO] (ex22_main.c:20) count after assign: 3000
+[INFO] (ex22_main.c:8) count is: 80
+[INFO] (ex22_main.c:13) count in this scope is 100
+[INFO] (ex22_main.c:16) count is at exit: 80
+[INFO] (ex22_main.c:20) count after assign: 3000
+[INFO] (ex22_main.c:51) count after calling scope_demo: 4
+```
+
+最后运行`scope_demo`，可以在实例中观察到作用域。要注意到的关键点是，`count`局部变量在调用后保持不变。你将它像一个变量一样传入函数，它一定不会发生改变。要想达到目的你需要我们的老朋友<mark>指针</mark>。如果你将指向`count`的指针传入函数，那么函数就会<mark>持有它的地址并且能够改变它</mark>。
+
+下面是一些编程C代码时需要遵循的规则，可以让你避免与栈相关的bug：
+
+- 不要隐藏某个变量，就像上面`scope_demo`中对`count`所做的一样。这可能会产生一些隐蔽的bug，你认为你改变了某个变量但实际上没有。
+
+- 避免过多的全局变量，尤其是跨越多个文件。如果必须的话，要使用读写器函数，就像`get_age`。这并不适用于常量，因为它们是只读的。我是说对于`THE_SIZE`这种变量，如果你希望别人能够修改它，就应该使用读写器函数。
+
+- 在你不清楚的情况下，应该把它放在堆上。不要依赖于栈的语义，或者指定区域，而是要直接使用`malloc`创建它。
+
+- 不要使用函数级的静态变量，就像`update_ratio`。它们并不有用，而且当你想要使你的代码运行在多线程环境时，会有很大的隐患。对于良好的全局变量，它们也非常难于寻找。
+
+- 避免复用函数参数，因为你搞不清楚仅仅想要复用它还是希望修改它的调用者版本
+
+我认为很需要理解的是：
+
+在C语言中，不同的源文件（.c文件）可以通过头文件（.h文件）进行联系。头文件通常包含了变量和函数的声明，而定义则在对应的源文件中实现。通过这种方式，你可以将代码分割成多个文件，以提高代码的可维护性和可读性。
+
+- `ex22.h` 文件包含了变量和函数的声明：
+
+- `ex22.c `文件实现了声明在头文件中的变量和函数：
+
+- `ex22_main.c` 文件通过包含头文件 `ex22.h` 来使用 `ex22.c` 文件中定义的变量和函数：
