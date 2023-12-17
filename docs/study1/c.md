@@ -2941,3 +2941,163 @@ typedef enum EyeColor {
 ```
 
 是等价的，你可以你行修改代码，也可以让编译器自动为`OTHER_EYES`赋值。
+
+### 变参函数
+
+![ ](c/12172.png)
+
+```
+int read_scan(const char *fmt, ...)
+{
+    int i = 0;
+    int rc = 0;
+    int *out_int = NULL;
+    char *out_char = NULL;
+    char **out_string = NULL;
+    int max_buffer = 0;
+
+    va_list argp;
+    va_start(argp, fmt);
+
+    for(i = 0; fmt[i] != '\0'; i++) {
+        if(fmt[i] == '%') {
+            i++;
+            switch(fmt[i]) {
+                case '\0':
+                    sentinel("Invalid format, you ended with %%.");
+                    break;
+
+                case 'd':
+                    out_int = va_arg(argp, int *);
+                    rc = read_int(out_int);
+                    check(rc == 0, "Failed to read int.");
+                    break;
+
+                case 'c':
+                    out_char = va_arg(argp, char *);
+                    *out_char = fgetc(stdin);
+                    break;
+
+                case 's':
+                    max_buffer = va_arg(argp, int);
+                    out_string = va_arg(argp, char **);
+                    rc = read_string(out_string, max_buffer);
+                    check(rc == 0, "Failed to read string.");
+                    break;
+
+                default:
+                    sentinel("Invalid format.");
+            }
+        } else {
+            fgetc(stdin);
+        }
+
+        check(!feof(stdin) && !ferror(stdin), "Input error.");
+    }
+
+    va_end(argp);
+    return 0;
+
+error:
+    va_end(argp);
+    return -1;
+}
+```
+
+这里的变参函数叫做`read_scan`，它使用了`va_list`数据结构执行和`scanf`相同的工作，并支持宏和函数。
+
+### `va_list`数据结构：
+
+- `va_list` 是 `C `语言中用于访问不定参数函数中参数列表的数据类型。在 C 语言中，有一组宏（`<stdarg.h> `头文件中的宏）允许函数通过不定数量的参数进行调用。这样的函数被称为不定参数函数，而 `va_list `就是用于处理这些不定参数的工具。
+
+- 具体来说，`va_list `是一个指向参数列表的指针，它允许你在函数中访问这些参数。在函数内部，你可以使用一系列宏来逐个访问参数。这些宏包括 `va_start`、`a_arg`、`va_copy` 和 `va_end`。
+
+- 以下是对这些宏的简要说明：
+
+`va_start`: 初始化 `va_list `对象，使其指向参数列表的第一个参数。
+`va_arg`: 返回 `va_list` 指向的参数，并将指针移动到下一个参数。
+`va_copy`: 复制一个`va_list` 对象。
+`va_end`: 清理 `va_list` 对象。
+在给定的代码中，`va_list argp `是在 `va_start` 宏中被初始化的，然后在函数中通过不定参数的方式访问各种类型的参数。例如：
+
+```
+Copy code
+va_list argp;
+va_start(argp, fmt);
+
+// 在循环中通过 va_arg 访问参数
+// ...
+
+va_end(argp);
+```
+
+这种机制允许函数按照指定的格式字符串读取和处理不同类型的参数。
+
+---
+
+```
+ *out_string = calloc(1, max_buffer + 1);
+    check_mem(*out_string); 这段代码是什么意思
+```
+
+- 这段代码用于动态分配内存来存储字符串，并通过` calloc `函数将分配的内存初始化为零。让我们逐步解释：
+
+  - `calloc(1, max_buffer + 1);`: `calloc `是一个用于动态分配内存的函数，它接受两个参数，分别是要分配的块数和每个块的大小。在这里，我们请求分配一个块，其大小为 max_buffer + 1 个字节。`max_buffer + 1` 是因为我们通常需要一个额外的字节来存储字符串结尾的 `null `字符`（'\0'）`，以确保字符串正确终止。
+
+  - `*out_string = ...;`: 这将分配的内存地址赋值给 out_string 指针。这样，` *out_string` 就指向了一个包含 `max_buffer + 1 `个字节的内存块。
+
+`check_mem(*out_string);`: `check_mem `是一个宏，用于检查内存分配是否成功。如果 `*out_string` 为 `NULL`，说明内存分配失败，程序会跳转到 `error` 标签处进行错误处理。
+
+综合起来，这段代码的作用是安全地分配足够空间来存储字符串，并将分配的内存地址存储在 `out_string` 指针中。
+
+---
+
+```
+char *result = fgets(*out_string, max_buffer, stdin); check(result != NULL, "Input error.");
+```
+
+- 这段代码使用 `fgets `函数从标准输入中读取字符串，并将其存储到先前分配的内存块中。让我们逐步解释：
+  - `fgets(*out_string, max_buffer, stdin);`: `fgets `是一个用于从指定的文件流（这里是标准输入 `stdin`）读取一行字符串的函数。它接受三个参数：目标缓冲区的指针，最大读取的字符数（包括换行符和 `null `终止符），以及文件流。
+
+- `*out_string`: 这是指向先前分配的内存块的指针，用于存储从标准输入读取的字符串。
+  `max_buffer`: 指定最大读取的字符数。这个值通常是分配内存时传递的 `max_buffer + 1`，以确保有足够的空间存储字符串和 `null` 终止符。
+  `stdin`: 标准输入流。
+  `char *result = ...;`: `fgets` 的返回值是一个指向目标缓冲区的指针，或者如果读取失败（例如，到达文件末尾或发生错误），则返回 `NULL`。这里将 `fgets `的返回值存储在 result 变量中。
+
+- `check(result != NULL, "Input error.");`: `check` 是一个宏，用于检查条件是否为真。在这里，它检查 result 是否为` NULL`，如果是，表示发生了输入错误。如果条件不满足，程序会跳转到 `error` 标签处进行错误处理。
+- `fgets `函数在读取字符串时会将换行符（如果存在）和 null 终止符都存储在目标缓冲区中，但是返回的字符串不包括换行符，而是在其末尾添加了 null 终止符。所以，实际存储在缓冲区中的内容是包括换行符和 null 终止符的，但在处理返回的字符串时，通常不考虑换行符。
+
+综合起来，这段代码的目的是从标准输入中安全地读取一行字符串，并将其存储在先前分配的内存块中，同时检查输入是否成功。
+
+---
+
+### error标签
+
+```
+error:
+    if (*out_string) free(*out_string);  // 如果 out_string 不为 NULL，释放内存
+    *out_string = NULL;  // 将 out_string 设置为 NULL，防止出现悬挂指针
+    return -1;  // 返回错误代码
+```
+
+在这段代码中，`goto error`;语句并没有直接出现在主函数`main`中。实际上，`goto error`;语句被用在check宏中的错误检查逻辑中。这个宏在代码中的使用如下：
+
+```
+check(rc == 0, "Failed first name.");
+```
+
+`check`宏通常用于简化错误检查，如果发生错误，它会跳转到`error`标签执行错误处理代码。`check`宏在头文件`dbg.h`中
+
+- 这段`error`代码是错误处理的一部分，用于释放动态分配的内存并将指针置为 NULL，以避免悬空指针。
+
+具体解释如下：
+
+`if (*out_string)`：这个条件语句检查` *out_string `是否非空，即指针是否指向有效的内存块。如果指针不为空，说明内存已经成功分配。
+
+`free(*out_string)`：如果指针非空，就调用 free 函数释放 *out_string 指向的内存块。这是为了防止内存泄漏，确保在函数出错的情况下释放已分配的内存。
+
+`*out_string = NULL`：无论指针是否为空，都将指针置为 `NULL`。这是一种良好的编程实践，可以避免出现悬空指针`（dangling pointer）`问题，即指针指向已释放的内存。
+
+`return -1`：最后，函数返回错误代码 -1，表示在执行过程中发生了错误。
+
+这样的错误处理机制确保了在发生错误时及时释放已分配的资源，同时使指针保持良好的状态，避免了悬空指针可能导致的未定义行为。
