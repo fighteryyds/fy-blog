@@ -3113,6 +3113,6 @@ check(rc == 0, "Failed first name.");
 在写入Makefile时，需要注意因为只有读入的权力，你可以赋予写入的权力，如果你无法赋予写入的权力，可以试一下以管理员身份使用vim打开Makefile文件，然后在结束时<mark>输入w！来强制写入</mark>。
 
 ```
-1|sudo vim filename   #使用管理员身份进行编辑
+1|sudo vim filename   #使用管理员身份进行	编辑
 2|:w!   #结束时的输入
 ```
