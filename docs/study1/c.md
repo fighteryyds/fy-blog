@@ -3116,3 +3116,61 @@ check(rc == 0, "Failed first name.");
 1|sudo vim filename   #使用管理员身份进行	编辑
 2|:w!   #结束时的输入
 ```
+
+![ ](c/12191.png)
+
+2023.12.19今天我用vim打开`bstrlib.c`和`bstrlib.h`文件，发现里面居然是空的，然后我再用那个`curl`来下这俩个文件，发现请求无响应。可能是因为文件的位置发生了变换，然后我通过官网，找到了文件的位置，可是还是无响应，只能在库上直接复制粘贴了。
+
+[bstrlib.c](https://github.com/websnarf/bstrlib/blob/master/bstrlib.c)
+
+[bstrlib.h](https://github.com/websnarf/bstrlib/blob/master/bstrlib.h)
+
+Makefile文件内容解析：
+
+以下是格式完全正确的Makefile文件
+
+```
+PREFIX?=/usr/local
+CFLAGS=-g -Wall -I${PREFIX}/apr/include/apr-1 -I${PREFIX}/apr/include/apr-util-1
+LDFLAGS=-L${PREFIX}/apr/lib -lapr-1 -pthread -laprutil-1
+
+all: devpkg
+
+devpkg: bstrlib.o db.o shell.o commands.o
+
+install: all
+	install -d $(DESTDIR)/$(PREFIX)/bin/
+	install devpkg $(DESTDIR)/$(PREFIX)/bin/
+
+clean:
+	rm -f *.o
+	rm -f devpkg
+	rm -rf *.dSYM
+
+```
+
+- `PREFIX?=/usr/local`: 这行定义了PREFIX变量，表示安装目录的前缀。如果之前未定义，使用默认值`/usr/local`。
+
+- `CFLAGS=-g -Wall -I${PREFIX}/apr/include/apr-1 -I${PREFIX}/apr/include/apr-util-1`: 这行定义了`CFLAGS`变量，包含了编译时的一些选项，例如调试信息（-g）、警告（-Wall）以及头文件的搜索路径。
+
+- `LDFLAGS=-L${PREFIX}/apr/lib -lapr-1 -pthread -laprutil-1`: 这行定义了`LDFLAGS`变量，包含了链接时的一些选项，例如库文件的搜索路径和需要链接的库。
+
+- all: `devpkg`: 这行定义了一个目标，表示在运行make时默认构建的目标是`devpkg`。
+
+- `devpkg`: `bstrlib.o db.o shell.o commands.o`: 这行表示`devpkg`这个目标依赖于`bstrlib.o`、`db.o`、`shell.o`和`commands.o`这四个文件。如果它们中的任何一个发生了变化，make将重新构建`devpkg`。
+
+- `install: all`: 这行表示install这个目标依赖于all，也就是在安装之前会先构建`devpkg`。
+
+- `install -d $(DESTDIR)/$(PREFIX)/bin/`: 这行用于创建安装目录。
+
+- `install devpkg $(DESTDIR)/$(PREFIX)/bin/`: 这行用于将构建好的`devpkg`可执行文件安装到指定目录。
+
+- clean: 这个目标用于清理构建过程中生成的中间文件和可执行文件。
+
+- `rm -rf *.dSYM`: 这行用于删除可能由调试信息生成的`.dSYM`目录。
+
+我目前的进度：
+
+还缺一些依赖
+
+![ ](c/12192.png)
