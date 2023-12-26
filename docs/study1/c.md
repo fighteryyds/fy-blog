@@ -3358,3 +3358,95 @@ make PREFIX=/opt/mysoftware install
 ```
 
 这将把软件安装到 `/opt/mysoftware` 目录。
+
+> `Makefile5:`
+
+```
+SOURCES=$(wildcard src/**/*.c src/*.c)
+```
+
+这神奇的一行通过执行`wildcard`搜索在`src/`中所有`*.c`文件来动态创建`SOURCES`变量。你需要提供`src/**/*.c`和`src/*.c`以便GNU make能够包含`src`目录及其子目录的所有此类文件。
+
+---
+
+在软件开发中，SOURCES 通常表示源代码文件的列表。这个变量用于指定编译项目所需的源代码文件。
+
+在一个典型的 Makefile 中，你可能会看到类似以下的设置：
+
+```
+SOURCES = file1.c file2.c file3.c
+```
+
+这里的 SOURCES 就是一个包含所有源文件名称的列表。在 Makefile 的其他部分，你可能会看到类似以下的规则，用于编译这些源文件：
+
+```
+OBJECTS = $(SOURCES:.c=.o)
+
+program: $(OBJECTS)
+    $(CC) $(OBJECTS) -o program
+```
+
+在这个例子中，SOURCES 包含了所有的 .c 源文件，而 OBJECTS 变量则通过将 .c 替换为 .o 来生成所有的目标文件。最终的目标是 program，它依赖于所有的目标文件。这样，通过 make program 命令，你可以编译并链接所有的源文件生成可执行文件。
+
+这只是一个基本的示例，实际的 Makefile 可能更加复杂，包含了编译选项、依赖关系等。
+
+<mark>这里的$(CC)代表什么意思?</mark>
+
+`$(CC) `是一个 `Makefile` 中的变量，表示 C 编译器的名称。`Makefile` 是一个用于管理源代码编译的工具，其中的变量允许你以灵活的方式指定编译器和其他工具。
+
+在一个典型的 Makefile 中，你可能会看到类似以下的设置：
+
+```
+CC = gcc
+```
+
+这里将 CC 设置为 `gcc`，表明使用 GNU Compiler Collection 的 C 编译器。
+
+> `Makefile6:`
+
+在GNU Make中，`patsubst`是一个用于模式替换的函数。它的一般形式如下
+
+```
+$(patsubst pattern,replacement,text)
+```
+
+这个函数的作用是在`text`中查找符合`pattern`的部分，并将其替换为`replacement`。它是一种对字符串进行模式匹配和替换的机制。
+
+`pattern`: 要匹配的模式，可以包含通配符，比如`%`表示任意字符。
+`replacement`: 匹配到的模式将被替换为这个字符串。
+`text`: 要进行替换的原始文本。
+这个函数在`Makefile`中常用于文件名的处理。例如，你可以使用`patsubst`来将一组源文件的文件扩展名替换为另一种，或者从文件列表中提取特定部分。
+
+示例：
+
+```
+# 将所有.c文件替换为对应的.o文件
+objects := $(patsubst %.c,%.o,$(sources))
+
+# 从一组文件中提取文件名部分
+filenames := $(patsubst %.txt,%,$(files_with_extension_txt))
+```
+
+> `Makefile8:`
+
+在GNU Make中，`wildcard`是一个用于展开通配符模式的函数。它的一般形式如下：
+
+```
+$(wildcard pattern)
+```
+
+这个函数用于匹配文件名，并返回符合指定通配符模式的文件列表。通常，`wildcard`用于获取当前目录下符合某一模式的文件列表。
+
+pattern: 文件名的通配符模式，可以包含通配符，比如*和?。
+
+示例：
+
+```
+# 获取当前目录下所有的.c文件
+sources := $(wildcard *.c)
+
+# 获取当前目录下所有的.c和.h文件
+headers_and_sources := $(wildcard *.c *.h)
+```
+
+在这些示例中，`wildcard`函数用于查找符合指定通配符模式的文件，并将它们作为一个文件列表返回。这些文件列表可以用于进一步的操作，比如编译、链接等。
