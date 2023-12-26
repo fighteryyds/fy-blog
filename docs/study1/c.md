@@ -3450,3 +3450,25 @@ headers_and_sources := $(wildcard *.c *.h)
 ```
 
 在这些示例中，`wildcard`函数用于查找符合指定通配符模式的文件，并将它们作为一个文件列表返回。这些文件列表可以用于进一步的操作，比如编译、链接等。
+
+> `Makefile9:`
+
+```
+TEST_SRC=$(wildcard tests/*_tests.c)
+TESTS=$(patsubst %.c,%,$(TEST_SRC))
+```
+
+- 这两行代码在一个 Makefile 中通常用于自动发现测试源文件并生成相应的测试目标。
+
+- `TEST_SRC`=`$(wildcard tests/*_tests.c)`：
+
+- `wildcard `函数用于匹配指定模式的文件名。这里查找了所有位于 tests/ 目录下，且文件名以 `_tests.c` 结尾的 C 源文件。
+  找到的文件列表会被赋值给变量 `TEST_SRC`。
+  `TESTS`=`$(patsubst %.c,%,$(TEST_SRC))`：
+
+- `patsubst` 函数是模式替换函数，用于替换文件名中的模式。这里的模式是 %.c，表示所有以 .c 结尾的文件。
+- 对 TEST_SRC 中的每个文件名，将其替换为相应的去掉 .c 后缀的目标名。
+  替换后的目标名列表会被赋值给变量 TESTS。
+- 综合起来，这两行代码的作用是找到 tests/ 目录下所有的 `_tests.c `文件，并生成相应的测试目标，去掉了文件名中的 .c 后缀。这样的测试目标通常用于构建和运行单元测试。
+
+> `Makefile11:`
