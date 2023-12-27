@@ -3537,4 +3537,32 @@ $(OPTFLAGS)是一个变量，可以用于添加额外的编译选项。在前面
 
 `dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)：`这是一个目标（target）规则，表示当执行`make dev`时，将会使用上述定义的`CFLAGS`变量，并执行后面的规则。
 
-`dev: all：`这里依赖于另一个目标all，表示在构建`dev`之前，需要先构建all。all通常是一个伪目标，它可能会包含整个项目的构建过程。在这里，它被用作`dev`的依赖项，确保在构建``dev``时会先执行all。
+`dev: all：`这里依赖于另一个目标all，表示在构建`dev`之前，需要先构建all。all通常是一个伪目标，它可能会包含整个项目的构建过程。在这里，它被用作`dev`的依赖项，确保在构建``dev``时会先执行all。		
+
+> `Makefile19:`
+
+```
+$(TARGET): CFLAGS += -fPIC
+$(TARGET): build $(OBJECTS)
+```
+
+这两行代码也是在一个 Makefile 文件中的规则定义，用于构建目标 $(TARGET)。
+
+`$(TARGET): CFLAGS += -fPIC`：这行代码表示为目标 $(TARGET) 添加了编译标志 `-fPIC`。`-fPIC` 是 Position Independent Code 的缩写，用于生成与位置无关的代码，通常用于构建共享库（shared library）。
+
+$(TARGET): build $(OBJECTS)：这行代码表示构建目标 $(TARGET) 需要先构建目标 build 和依赖项 $(OBJECTS)。这里的 build 可能是一个目录，用于存放中间文件，而 $(OBJECTS) 可能是一组目标文件。
+
+整个规则的意义是，为了构建目标 $(TARGET)，需要先执行 build 目标（确保相关目录存在），然后编译生成 $(OBJECTS) 中定义的一组目标文件，最后链接这些目标文件生成最终的目标 $(TARGET)。在这个过程中，由于之前添加了` -fPIC `编译标志，最终生成的目标文件将是位置无关的。
+
+---
+
+`ar rcs $@ $(OBJECTS)`：这行代码使用 `a` 工具创建了一个静态库（archive），`rcs` 是 `ar `命令的选项，分别表示：
+
+r：将文件插入到库中，覆盖同名文件。
+c：创建库，如果库不存在则创建新的。
+s：创建索引。
+$@ 是一个自动变量，表示规则的目标，即 $(TARGET)。$(OBJECTS) 是规则的依赖，表示一组目标文件。所以，这行命令的作用是将一组目标文件打包成一个静态库。
+
+`ranlib $@`：这行代码使用 `ranlib` 工具为创建的静态库生成索引。$@ 同样表示规则的目标，即 `$(TARGET)`。
+
+总体来说，这两行代码完成了创建静态库的过程，包括将目标文件插入到库中并生成索引。这样，`$(TARGET)` 就是一个包含了一组目标文件的静态库。
