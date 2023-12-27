@@ -3556,7 +3556,7 @@ $(TARGET): build $(OBJECTS)：这行代码表示构建目标 $(TARGET) 需要先
 
 ---
 
-`ar rcs $@ $(OBJECTS)`：这行代码使用 `a` 工具创建了一个静态库（archive），`rcs` 是 `ar `命令的选项，分别表示：
+`ar rcs $@ $(OBJECTS)`：这行代码使用 `ar` 工具创建了一个静态库（archive），`rcs` 是 `ar `命令的选项，分别表示：
 
 r：将文件插入到库中，覆盖同名文件。
 c：创建库，如果库不存在则创建新的。
@@ -3566,3 +3566,58 @@ $@ 是一个自动变量，表示规则的目标，即 $(TARGET)。$(OBJECTS) �
 `ranlib $@`：这行代码使用 `ranlib` 工具为创建的静态库生成索引。$@ 同样表示规则的目标，即 `$(TARGET)`。
 
 总体来说，这两行代码完成了创建静态库的过程，包括将目标文件插入到库中并生成索引。这样，`$(TARGET)` 就是一个包含了一组目标文件的静态库。
+
+> `Makefile21:`
+
+```
+build:
+        @mkdir -p build
+        @mkdir -p bin
+```
+
+>  `@mkdir -p build `表示创建一个名为 "build" 的目录，如果该目录已存在则不报错。这个目录通常用于存放编译过程中生成的中间文件和目标文件。
+
+>  `@mkdir -p bin `类似地创建一个名为 "bin" 的目录，用于存放编译生成的可执行文件。
+
+这两个规则通常用于确保在编译过程中所需的目录都存在，如果不存在就创建。在实际的项目中，这种目录结构的组织有助于保持项目的整洁性和可维护性。
+
+- 在Unix/Linux系统的`mkdir`命令中，-p选项表示递归创建目录。如果指定的目录路径中的某些目录不存在，该选项会自动创建这些目录，而不会报错。如果目录已经存在，它会默默地忽略。
+
+- 例如，对于命令`mkdir -p build：`
+
+- 如果目录 build 存在，什么也不做。
+- 如果目录 build 不存在，创建它。
+  这有助于确保在构建过程中所需的目录结构存在，而无需手动一级一级地创建。
+
+### 测试
+
+```
+.PHONY: tests
+```
+
+如果你拥有一个不是“真实”的目标，只有有个目录或者文件叫这个名字，你需要使用g`.PHONY:`标签来标记它，以便`make`忽略该文件。
+
+```
+# The Unit Tests
+.PHONY: tests
+tests: CFLAGS += $(TARGET)
+tests: $(TESTS)
+        sh ./tests/runtests.sh
+```
+
+`.PHONY: tests：`指定 `tests`	 是一个伪目标，而不是一个真实的文件。这是因为`tests` 不会生成实际的输出文件，而是用于触发测试动作。
+
+tests: `CFLAGS += $(TARGET)`：将 $(TARGET) 添加到编译标志 `CFLAGS `中。这可能是为了确保测试代码能够链接到目标库。
+
+tests: $(TESTS)：指定 tests 目标依赖于 $(TESTS) 中定义的测试程序。这表示在运行测试之前，必须先构建这些测试程序。
+
+`sh ./tests/runtests.sh`：运行` tests/runtests.sh `脚本，该脚本负责执行所有的单元测试。
+
+因此，当你运行 make tests 时，它将编译测试程序，并运行` tests/runtests.sh `脚本以执行单元测试。
+
+```
+valgrind:
+        VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
+```
+
+为了能够动态使用`Valgrind`重复运行测试，创建了`valgrind:`标签，它设置了正确的变量并且再次运行它。它会将`Valgrind`的日志放到`/tmp/valgrind-*.log`，你可以查看并了解发生了什么。之后`tests/runtests.sh`看到`VALGRIND`变量时，它会明白要在`Valgrind`下运行测试程序。
