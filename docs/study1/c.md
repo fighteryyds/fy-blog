@@ -3471,4 +3471,70 @@ TESTS=$(patsubst %.c,%,$(TEST_SRC))
   替换后的目标名列表会被赋值给变量 TESTS。
 - 综合起来，这两行代码的作用是找到 tests/ 目录下所有的 `_tests.c `文件，并生成相应的测试目标，去掉了文件名中的 .c 后缀。这样的测试目标通常用于构建和运行单元测试。
 
-> `Makefile11:`s
+> `Makefile11:`
+
+```
+TARGET=build/libYOUR_LIBRARY.a
+SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
+```
+
+在这里，TARGET 是静态库文件（.a 文件）的路径和名称。SO_TARGET 是通过将 .a 替换为 .so 而得到的共享库文件（.so 文件）的路径和名称。
+
+让我们拆解一下：
+
+```
+TARGET=build/libYOUR_LIBRARY.a
+```
+
+这里，TARGET 被设置为 `build/libYOUR_LIBRARY.a`，表示构建目录中的一个静态库文件。
+
+```
+SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
+```
+
+这里，`patsubst` 函数用于模式替换。%.a 是一个模式，表示以 .a 结尾的字符串。%.so 是替换模式，表示将匹配到的模式替换为以 .so 结尾的字符串。所以，`$(patsubst %.a,%.so,$(TARGET)) `的作用是将` TARGET` 中的 .a 替换为 .so，从而得到共享库文件的路径和名称。
+
+最终，`SO_TARGET` 就是共享库文件的路径和名称。这种做法通常用于在构建过程中生成静态库和共享库两种形式的库文件。
+
+让其他人扩展：
+
+```
+# WARNING! Just a demonstration, won't really work right now.
+# this installs the library into /tmp
+$ make PREFIX=/tmp install
+# this tells it to add pthreads
+$ make OPTFLAGS=-pthread
+```
+
+`make PREFIX=/tmp install`：这是在编译和安装时指定了`PREFIX`变量，将库安装到`/tmp`目录。PREFIX通常用于指定安装目录，这里将库安装到临时目录以进行演示。
+
+`make OPTFLAGS=-pthread`：这是在编译时添加了`-pthread`选项，该选项用于告诉编译器链接`pthread`库，支持多线程。`OPTFLAGS`通常用于指定编译器选项，这里将其设置为`-pthread`。
+
+需要注意的是，这只是一个演示，实际情况中具体的Makefile文件内容和支持的编译选项可能会有所不同。在实际项目中，你可能需要根据项目的需求和依赖项进行适当的设置。
+
+### 构建目标
+
+> `Makefile14`:
+
+在没有提供目标时`make`会默认运行第一个目标。这里它叫做`all:`，并且它提供了`$(TARGET) tests`作为构建目标。查看`TARGET`变量，你会发现这就是库文件，所以`all:`首先会构建出库文件。之后，`tests`目标会构建单元测试。
+
+> `Makefile16:`
+
+```
+dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
+dev: all
+```
+
+这两行代码是在一个Makefile文件中的规则（rules）定义，用于构建和编译项目。
+
+`CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)`：这里定义了一个变量`CFLAGS`，它包含了编译器的一些标志。具体含义如下：
+
+-g：生成调试信息。
+-Wall：开启大多数编译器的警告信息。
+`-Isrc`：指定包含文件的搜索路径，这里指定了`src`目录。
+-Wextra：开启额外的警告。
+$(OPTFLAGS)是一个变量，可以用于添加额外的编译选项。在前面的例子中，它被用于添加了-pthread选项。
+
+`dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)：`这是一个目标（target）规则，表示当执行`make dev`时，将会使用上述定义的`CFLAGS`变量，并执行后面的规则。
+
+`dev: all：`这里依赖于另一个目标all，表示在构建`dev`之前，需要先构建all。all通常是一个伪目标，它可能会包含整个项目的构建过程。在这里，它被用作`dev`的依赖项，确保在构建``dev``时会先执行all。
