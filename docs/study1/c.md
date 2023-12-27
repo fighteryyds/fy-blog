@@ -3621,3 +3621,84 @@ valgrind:
 ```
 
 为了能够动态使用`Valgrind`重复运行测试，创建了`valgrind:`标签，它设置了正确的变量并且再次运行它。它会将`Valgrind`的日志放到`/tmp/valgrind-*.log`，你可以查看并了解发生了什么。之后`tests/runtests.sh`看到`VALGRIND`变量时，它会明白要在`Valgrind`下运行测试程序。
+
+```
+valgrind:
+        VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
+```
+
+`valgrind:`：定义了一个名为 `valgrind` 的目标。这个目标通常是一个用于在 make 中触发特殊操作的伪目标。
+
+`VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log"`：这里定义了一个变量 `VALGRIND`，并设置其值为 `Valgrind` 命令行选项。--log-file 选项用于指定 `Valgrind `输出的日志文件路径，%p 会被替换为当前进程的 ID。
+
+$(MAKE)：通过 $(MAKE) 调用了另一次 make。这会导致递归地执行 make，但在这次执行中，`VALGRIND` 变量已经被定义，因此会带上` Valgrind `选项。
+
+因此，当你运行 `make valgrind `时，它会以` Valgrind `工具的方式再次运行 make，从而对程序进行内存检测，并将结果输出到指定的日志文件中。这通常用于检查程序是否存在内存泄漏等问题。
+
+清理工具:
+
+```
+# The Cleaner
+clean:
+        rm -rf build $(OBJECTS) $(TESTS)
+        rm -f tests/tests.log
+        find . -name "*.gc*" -exec rm {} \;
+        rm -rf `find . -name "*.dSYM" -print`
+```
+
+这段代码是一个 `make` 文件中的规则，用于清理构建过程中生成的临时文件和目标文件。具体解释如下：
+
+`clean:`：定义了一个名为 clean 的目标。这个目标通常是一个用于在 `make `中触发特殊操作的伪目标。
+
+`rm -rf build $(OBJECTS) $(TESTS)`：移除 build 目录、所有目标文件 `$(OBJECTS)` 和测试程序 `$(TESTS)`。
+
+`rm -f tests/tests.log`：移除测试日志文件。
+
+`find . -name "*.gc*" -exec rm {} \;`使用 find 命令找到所有以` .gc `结尾的文件，并执行 rm 命令删除它们。这通常是与测试覆盖率工具（如 `gcov`）一起使用的文件。
+
+`rm -rf find . -name "*.dSYM" -print``：`使用 find 命令找到所有以 .`dSYM` 结尾的目录，并执行 rm 命令递归地删除它们。这通常是与调试信息相关的目录，例如在 `macOS `上使用的 `dSYM `目录。
+
+当你运行 make clean 时，它将执行上述操作，清理项目中的临时文件、目标文件和测试相关的文件，以便重新开始构建。
+
+---
+
+```
+# The Install
+install: all
+        install -d $(DESTDIR)/$(PREFIX)/lib/
+        install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
+```
+
+这段代码是一个 make 文件中的规则，用于安装项目。具体解释如下：
+
+install:：定义了一个名为 install 的目标。这个目标通常用于安装软件或其组件。
+
+all：这个规则的依赖关系，表示在执行 install 之前，必须先构建 all 目标（在这个上下文中，可能是构建整个项目）。
+
+`install -d $(DESTDIR)/$(PREFIX)/lib/：`使用 install 命令创建目标安装目录。`-d` 选项表示创建目录。`$(DESTDIR)` 和 `$(PREFIX)` 是变量，用于指定目标安装的基本目录。`$(DESTDIR)` 是一个用于包装软件的临时目录，而 $(PREFIX) 是安装的根目录。
+
+`install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/：`使用 install 命令将构建好的目标文件（在这里可能是库文件）复制到目标安装目录中。
+
+这段代码的作用是在安装过程中将构建好的目标文件复制到指定的目录中。通过使用 `DESTDIR `和 `PREFIX` 这样的变量，可以使安装目录更加灵活，以便在不同的环境中轻松更改安装路径。
+
+---
+
+检查工具
+
+```
+# The Checker
+BADFUNCS='[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)|stpn?cpy|a?sn?printf|byte_)'
+check:
+        @echo Files with potentially dangerous functions.
+        @egrep $(BADFUNCS) $(SOURCES) || true
+```
+
+这段代码是一个 make 文件中的规则，用于检查项目中是否存在使用可能存在安全风险的 C 库函数。具体解释如下：
+
+check:：定义了一个名为 check 的目标。这个目标通常用于执行代码质量检查、安全性检查等任务。
+
+@echo Files with potentially dangerous functions.：使用 echo 命令输出一条提示信息，表示即将列出可能包含危险函数的文件。
+
+`@egrep $(BADFUNCS) $(SOURCES) || true`：使用` egrep` 命令（在这里可能是 `grep` 的一个版本，支持扩展正则表达式）在源代码文件中搜索可能包含危险函数的地方。`$(BADFUNCS)` 是一个包含正则表达式的变量，用于匹配可能危险的函数。$(SOURCES) 是一个包含所有源文件的变量。|| true 表示忽略 `egrep` 命令的返回值，即使没有找到匹配项也继续执行。
+
+这段代码的作用是输出可能包含危险函数的文件列表。在软件开发中，这样的检查可以帮助开发者避免使用一些已知的不安全函数，提高代码的安全性。
