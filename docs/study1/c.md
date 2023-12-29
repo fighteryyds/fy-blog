@@ -3725,5 +3725,42 @@ c中的库包含俩种基本类型：
 
 <mark>动态加载动态库示例</mark>
 
+手动构建
+
 ![ ](c/12291.png)
 
+```
+typedef int (*lib_function)(const char *data);
+```
+
+会使用这个函数指针定义，来调用库中的函数。
+
+```
+ void *lib = dlopen(lib_file, RTLD_NOW);
+```
+
+在为一个小型程序做必要的初始化后，使用了`dlopen`函数来加载由`lib_file`表示的库。这个函数返回一个句柄，我们随后会用到它，就像来打开文件那样。
+
+```
+check(lib != NULL, "Failed to open the library %s: %s", lib_file, dlerror());
+```
+
+如果出现错误，会执行通常的检查并退出，但是要注意最后使用了`dlerror`来查明发生了什么错误。
+
+```
+lib_function func = dlsym(lib, func_to_run);
+```
+
+使用了`dlsym`来获取`lib`中的函数，通过它的字面名称`func_to_run`。这是最强大的部分，因为这里动态获取了一个函数指针，基于从命令行`argv`获得的字符串。
+
+```
+rc = func(data)
+```
+
+接着调用`func`函数，获得返回值并进行检查。
+
+```
+rc = dlclose(lib);
+```
+
+最后，像关闭文件那样关闭了库。通常你需要在程序的整个运行期间保证它们打开，所以关闭操作并不非常实用，只是在这里演示一下它。
