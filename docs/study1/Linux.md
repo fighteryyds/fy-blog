@@ -655,7 +655,7 @@ $ tmux split-window
 $ tmux split-window -h
 ```
 
-<img src="Linux/112.jpg">   
+![ ](Linux/112.jpg)   
 
 12.移动光标
 
