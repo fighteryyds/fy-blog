@@ -537,3 +537,108 @@ Arch Linux 拥有强大的功能，但因其特殊的理念使得用户不易使
 ![ ](Linux/12122.jpg)
 
 ![ ](Linux/12123.jpg)
+
+## Tmux
+
+1.安装
+
+```
+$ sudo apt-get install tmux
+```
+
+2.进入
+
+```
+tmux
+```
+
+上面命令会启动 Tmux 窗口，底部有一个状态栏。状态栏的左侧是窗口信息（编号和名称），右侧是系统信息。
+
+3.查看帮助
+
+```
+$ ctrl+b	+	?
+```
+
+4.退出tmux
+
+```
+1|ctrl+d	#利用快捷键
+2|exit		#输入退出命令
+```
+
+5.会话管理
+
+第一个启动的 Tmux 窗口，编号是`0`，第二个窗口的编号是`1`，以此类推。这些窗口对应的会话，就是 0 号会话、1 号会话。
+
+为会话起名的命令：
+
+```
+$ tmux new -s <session-name>
+```
+
+6.分离对话
+
+在 Tmux 窗口中，按下`Ctrl+b d`或者输入`tmux detach`命令，就会将当前会话与窗口分离。
+
+<mark>如果你想保留这个会话进程，那你就使用 tmux detach 而不是 exit！</mark>
+
+```
+ $ tmux detach
+```
+
+7.`tmux ls`命令可以查看当前所有的 Tmux 会话。
+
+```
+$ tmux ls
+```
+
+8.接入对话
+
+`tmux attach`命令用于重新接入某个已存在的会话。
+
+```
+# 使用会话编号
+$ tmux attach -t 0
+
+# 使用会话名称
+$ tmux attach -t <session-name>
+```
+
+9.杀死对话
+
+`tmux kill-session`命令用于杀死某个会话。
+
+```
+# 使用会话编号
+$ tmux kill-session -t 0
+
+# 使用会话名称
+$ tmux kill-session -t <session-name>
+```
+
+10.切换对话
+
+<mark>在你的 tmux 会话中直接使用这个命令就可以!</mark>
+
+```
+# 使用会话编号
+$ tmux switch -t 0
+
+# 使用会话名称
+$ tmux switch -t <session-name>
+```
+
+11.重命名会话
+
+```
+$ tmux rename-session -t <old-name> <new-name>
+```
+
+12.会话快捷键
+
+```
+Ctrl+b d：分离当前会话。
+Ctrl+b s：列出所有会话。
+Ctrl+b $：重命名当前会话。
+```
