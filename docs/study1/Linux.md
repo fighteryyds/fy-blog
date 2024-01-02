@@ -540,6 +540,8 @@ Arch Linux 拥有强大的功能，但因其特殊的理念使得用户不易使
 
 ## Tmux
 
+![ ](Linux/122.png)
+
 1.安装
 
 ```
@@ -753,14 +755,7 @@ $ tmux rename-window <new-name>
 16.其他命令
 
 ```
-# 列出所有快捷键，及其对应的 Tmux 命令
-$ tmux list-keys
-
-# 列出所有 Tmux 命令及其参数
-$ tmux list-commands
-
-# 列出当前所有 Tmux 会话的信息
-$ tmux info
-
-# 重新加载当前的 Tmux 配置
-$ tmux source-file ~/.tmux.conf
+$ tmux list-keys		#列出所有快捷键，及其对应的 Tmux 命令
+$ tmux list-commands	# 列出所有 Tmux 命令及其参数
+$ tmux info				# 列出当前所有 Tmux 会话的信息
+$ tmux source-file ~/.tmux.conf	# 重新加载当前的 Tmux 配置
