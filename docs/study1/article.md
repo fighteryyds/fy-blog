@@ -226,3 +226,59 @@ git branch 1124c
 
 ### 课程概览与shell
 
+​	1.动机
+
+- 计算机可以帮助我们解决重复性的工作，但其实我们也在重复性的使用计算机。
+
+- 我们在使用工具时，实际上可能只利用了这些工具的很少一部分，就比如我对`tmux`的印象，一开始我以为它只是一个分屏工具，甚至我还觉得它没有`screen`好用,但当我真正好时间去学习如何使用它时，发现它是那么的好用，而且分屏也只是它的很小的卖点，它可以用来保留进程，还可以为同一个进程开多个窗口，同一个窗口可以开多个窗格。
+
+2.课程结构
+
+本课程包含 11 个时长在一小时左右的讲座，每一个讲座都会关注一个特定的主题或者工具。
+
+3.主题1：`The Shell`
+
+为了充分利用计算机的能力，我们不得不回到最根本的方式，使用文字接口：`Shell`,它允许你执行程序，输入并获取某种半结构化的输出。
+
+4.使用shell
+
+bash:
+
+```
+zjx@linux-OSCA:~$	#用户名为zjx@linux-OSCA 当前目录为~ $表示现在的身份不是root用户
+```
+
+![ ](Linux/131.png)
+
+- 执行了 `date` 这个程序，不出意料地，它打印出了当前的日期和时间。然后，shell 等待我们输入其他命令。我们可以在执行命令的同时向程序传递 *参数* ：
+
+- 上例中，我们让 shell 执行 echo ，同时指定参数 hello。
+- 但是，shell 是如何知道去哪里寻找 `date` 或 `echo` 的呢？其实，类似于 Python 或 Ruby，shell 是一个编程环境，所以它具备变量、条件、循环和函数（下一课进行讲解）。当你在  shell 中执行命令时，您实际上是在执行一段 shell 可以解释执行的简短代码。如果你要求 shell 执行某个指令，但是该指令并不是  shell 所了解的编程关键字，那么它会去咨询 *环境变量*  `$PATH`，它会列出当 shell 接到某条指令时，进行程序搜索的路径：
+
+![ ](article/132.png)
+
+如果希望传递的参数中包含空格（例如一个名为 My Photos 的文件夹），您要么用使用单引号，双引号将其包裹起来，要么使用转义符号 `\` 进行处理（`My\ Photos`）。
+
+> 2024年 01月 03日 星期三 16:22:15 CST
+
+哈哈，我突然搞懂了环境变量是个啥，一下子感觉都非常的简单。
+
+```
+export MYSLIDE_HOME=/home/zjx/Documents/Repo/ppt_markdown
+```
+
+- export: 这是一个 shell 命令，用于设置或显示环境变量。在这里，它用于设置环境变量。
+
+- `MYSLIDE_HOME`: 这是环境变量的名称。
+
+- `/home/zjx/Documents/Repo/ppt_markdown`: 这是为环境变量 `MYSLIDE_HOME` 指定的值，即设置 `MYSLIDE_HOME `的路径`/home/zjx/Documents/Repo/ppt_markdown`。
+
+```
+export MYSLIDE_HOME=/home/zjx/Documents/Repo/ppt_markdown
+export MYSLIDE_SCRIPT=$MYSLIDE_HOME/scripts
+alias pptopen="$MYSLIDE_SCRIPT/open.sh $1"
+```
+
+我知道了使用一个程序时，只需要输入它的绝对路径即可，我就想到了这个`pptgen`也是同样的道理,先利用`MYSLIDE_SCRIPT`环境变量提供路径，再z执行shell脚本。
+
+> 以 .sh 结尾的文件通常是 Shell 脚本文件。这种文件包含一系列 Shell 命令，可以由操作系统的命令解释器（例如 Bash、sh、zsh 等）执行。 Shell 脚本被用于自动化和批处理任务，其中包含一系列要在终端中执行的命令。 Shell 脚本文件中的命令按顺序执行，可以包括变量、条件语句、循环等结构，使其具有较强的编程能力。
