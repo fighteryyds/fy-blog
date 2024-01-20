@@ -534,6 +534,8 @@ env VAR1=value1 VAR2=value2 myprogram
 
 > sed
 
+![ ](article/1201.png)
+
 sed 是一种流文本编辑器，其名称来源于流编辑器（stream editor）的缩写。它在Unix、Linux和类Unix系统上广泛使用，用于对文本进行转换和处理。sed 的主要功能是根据一系列的编辑命令对输入文本进行处理，输出结果。
 
 `sed` 的基本用法是在命令行中调用它并提供一系列编辑命令，这些命令可以包括搜索替换、删除行、插入文本等操作。例如，以下是一个简单的 sed 命令，用于将文件中的所有 "apple" 替换为 "orange"：
@@ -592,4 +594,138 @@ $ less ssh.log
 ```
 
 ---
+
+> awk
+
+- `awk` 其实是一种编程语言，只不过它碰巧非常善于处理文本。
+
+- `awk` 是一种用于文本处理和报告生成的编程语言。它通常用于处理结构化文本数据，例如表格数据或日志文件。
+
+- `awk `是一种解释性的编程语言，通常作为命令行工具在Unix、Linux和类Unix系统上使用。它读取文本文件，逐行扫描每一行，并根据用户提供的规则执行相应的操作。
+
+- `awk` 的基本结构是模式-动作语句，其中模式用于匹配文本的某些部分，而动作语句则定义了匹配时要执行的操作。
+
+## 命令行环境
+
+> 结束进程：
+
+`Ctrl+C或者kill -TERM <PID>`
+
+> 暂停和后台执行进程:
+
+`IGSTOP` 会让进程暂停。在终端中，键入 `Ctrl-Z` 会让 shell 发送 `SIGTSTP` 信号，`SIGTSTP`是 Terminal Stop 的缩写（即`terminal`版本的`SIGSTOP`）。
+
+们可以使用 [`fg`](https://www.man7.org/linux/man-pages/man1/fg.1p.html) 或 [`bg`](http://man7.org/linux/man-pages/man1/bg.1p.html) 命令恢复暂停的工作。它们分别表示在前台继续或在后台继续。
+
+[`jobs`](http://man7.org/linux/man-pages/man1/jobs.1p.html) 命令会列出当前终端会话中尚未完成的全部任务。您可以使用 pid 引用这些任务（也可以用 [`pgrep`](https://www.man7.org/linux/man-pages/man1/pgrep.1.html) 找出 `pid`）。更加符合直觉的操作是您可以使用百分号 + 任务编号（`jobs` 会打印任务编号）来选取该任务。如果要选择最近的一个任务，可以使用 `$!` 这一特殊参数。
+
+还有一件事情需要掌握，那就是命令中的 `&` 后缀可以让命令在直接在后台运行，这使得您可以直接在 shell 中继续做其他操作，不过它此时还是会使用 shell 的标准输出，这一点有时会比较恼人（这种情况可以使用 shell 重定向处理）。
+
+让已经在运行的进程转到后台运行，您可以键入`Ctrl-Z` ，然后紧接着再输入`bg`。注意，后台的进程仍然是您的终端进程的子进程，一旦您关闭终端（会发送另外一个信号`SIGHUP`），这些后台的进程也会终止。为了防止这种情况发生，您可以使用 [`nohup`](https://www.man7.org/linux/man-pages/man1/nohup.1.html) (一个用来忽略 `SIGHUP` 的封装) 来运行程序。针对已经运行的程序，可以使用`disown` 。除此之外，您可以使用终端多路复用器来实现，下一章节我们会进行详细地探讨。
+
+> 终端多路复用
+
+Tmux工具
+
+> 别名
+
+在shell的启动文件中添加，如.bashrc和.zshrc
+
+```
+alias alias_name="command_to_alias arg1 arg2"
+```
+
+> 配置文件
+
+很多程序的配置都是通过纯文本格式的被称作*点文件*的配置文件来完成的（之所以称为点文件，是因为它们的文件名以 `.` 开头，例如 `~/.vimrc`。也正因为此，它们默认是隐藏文件，`ls`并不会显示它们）。
+
+对于 `bash`来说，在大多数系统下，您可以通过编辑 `.bashrc` 或 `.bash_profile` 来进行配置。在文件中您可以添加需要在启动时执行的命令，例如上文我们讲到过的别名，或者是您的环境变量。
+
+> 管理配置文件
+
+它们应该在它们的文件夹下，并使用版本控制系统进行管理，然后通过脚本将其 **符号链接** 到需要的地方。这么做有如下好处：
+
+- **安装简单**: 如果您登录了一台新的设备，在这台设备上应用您的配置只需要几分钟的时间；
+- **可移植性**: 您的工具在任何地方都以相同的配置工作
+- **同步**: 在一处更新配置文件，可以同步到其他所有地方
+- **变更追踪**: 您可能要在整个程序员生涯中持续维护这些配置文件，而对于长期项目而言，版本历史是非常重要的
+
+如果您希望在不同的程序之间共享某些配置，该方法也适用。例如，如果您想要在 `bash` 和 `zsh` 中同时启用一些别名，您可以把它们写在 `.aliases` 里，然后在这两个 shell 里应用：
+
+```
+# Test if ~/.aliases exists and source it
+if [ -f ~/.aliases ]; then
+    source ~/.aliases
+fi
+```
+
+> 远程设备
+
+对于程序员来说，在他们的日常工作中使用远程服务器已经非常普遍了。如果您需要使用远程服务器来部署后端软件或您需要一些计算能力强大的服务器，您就会用到安全 shell（SSH）。和其他工具一样，SSH 也是可以高度定制的，也值得我们花时间学习它。
+
+> 通过SSH复制文件
+
+使用 ssh 复制文件有很多方法：
+
+- `ssh+tee`, 最简单的方法是执行 `ssh` 命令，然后通过这样的方法利用标准输入实现 `cat localfile | ssh remote_server tee serverfile`。回忆一下，[`tee`](https://www.man7.org/linux/man-pages/man1/tee.1.html) 命令会将标准输出写入到一个文件；
+- [`scp`](https://www.man7.org/linux/man-pages/man1/scp.1.html) ：当需要拷贝大量的文件或目录时，使用`scp` 命令则更加方便，因为它可以方便的遍历相关路径。语法如下：`scp path/to/local_file remote_host:path/to/remote_file`；
+- [`rsync`](https://www.man7.org/linux/man-pages/man1/rsync.1.html) 对 `scp` 进行了改进，它可以检测本地和远端的文件以防止重复拷贝。它还可以提供一些诸如符号连接、权限管理等精心打磨的功能。甚至还可以基于 `--partial`标记实现断点续传。`rsync` 的语法和`scp`类似；
+
+## 版本控制
+
+> Git的数据模型：
+
+- 数据对象:文件
+
+- 树：目录
+
+- 在 Git 中，历史记录是一个由快照组成的有向无环图。
+
+- Git 中的每个快照都有一系列的“父辈”，也就是其之前的一系列快照。注意，快照具有多个“父辈”而非一个，因为某个快照可能由多个父辈而来。
+
+- 在 Git 中，这些快照被称为“提交”。
+
+> Git的命令行接口
+
+基础：
+
+- `git help <command>`: 获取 git 命令的帮助信息
+- `git init`: 创建一个新的 git 仓库，其数据会存放在一个名为 `.git` 的目录下
+- `git status`: 显示当前的仓库状态
+- `git add <filename>`: 添加文件到暂存区
+- git commit: 创建一个新的提交    
+- `git log`: 显示历史日志
+- `git log --all --graph --decorate`: 可视化历史记录（有向无环图）
+- `git diff <filename>`: 显示与暂存区文件的差异
+- `git diff <revision> <filename>`: 显示某个文件两个版本之间的差异
+- `git checkout <revision>`: 更新 HEAD 和目前的分支
+
+分支与合并：
+
+- `git branch`: 显示分支
+
+- `git branch <name>`: 创建分支
+
+- ```plaintext
+  git checkout -b <name>
+  ```
+
+  : 创建分支并切换到该分支    
+
+  - 相当于 `git branch <name>; git checkout <name>`
+
+- `git merge <revision>`: 合并到当前分支
+
+- `git mergetool`: 使用工具来处理合并冲突
+
+- `git rebase`: 将一系列补丁变基（`rebase`）为新的基线
+
+撤销：
+
+- `git commit --amend`: 编辑提交的内容或信息
+- `git reset HEAD <file>`: 恢复暂存的文件
+- `git checkout -- <file>`: 丢弃修改
+- `git restore`:` git2.32`版本后取代git reset 进行许多撤销操作
+
+### 调试及性能分析
 
