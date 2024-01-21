@@ -729,3 +729,136 @@ fi
 
 ### 调试及性能分析
 
+>  调试代码
+
+打印调试法与日志：
+
+调试代码的第一种方法往往是在您发现问题的地方添加一些打印语句，然后不断重复此过程直到您获取了足够的信息并找到问题的根本原因。
+
+另外一个方法是使用日志，而不是临时添加打印语句。日志较普通的打印语句有如下的一些优势：
+
+- 您可以将日志写入文件、socket 或者甚至是发送到远端服务器而不仅仅是标准输出；
+- 日志可以支持严重等级（例如 INFO, DEBUG, WARN, ERROR等)，这使您可以根据需要过滤日志；
+- 对于新发现的问题，很可能您的日志中已经包含了可以帮助您定位问题的足够的信息。
+- 以彩色文本显示终端信息时可读性更好:
+
+![ ](article/1211.png)
+
+> 第三方日志系统:
+
+目前，系统开始使用 **system log**，您所有的日志都会保存在这里。大多数（但不是全部的）Linux 系统都会使用 `systemd`，这是一个系统守护进程，它会控制您系统中的很多东西，例如哪些服务应该启动并运行。`systemd` 会将日志以某种特殊格式存放于`/var/log/journal`，您可以使用 [`journalctl`](http://man7.org/linux/man-pages/man1/journalctl.1.html) 命令显示这些消息。
+
+![ ](article/1213.png)
+
+> 调速器:
+
+当通过打印已经不能满足您的调试需求时，您应该使用调试器。
+
+调试器是一种可以允许我们和正在执行的程序进行交互的程序，它可以做到：
+
+- 当到达某一行时将程序暂停；
+- 一次一条指令地逐步执行程序；
+- 程序崩溃后查看变量的值；
+- 满足特定条件时暂停程序；
+- 其他高级功能。
+
+> 专门工具：
+
+即使您需要调试的程序是一个二进制的黑盒程序，仍然有一些工具可以帮助到您。当您的程序需要执行一些只有操作系统内核才能完成的操作时，它需要使用 [系统调用](https://en.wikipedia.org/wiki/System_call)。有一些命令可以帮助您追踪您的程序执行的系统调用。在 Linux 中可以使用[`strace`](http://man7.org/linux/man-pages/man1/strace.1.html) .
+
+下面的例子展现来如何使用 `strace` 或 `dtruss` 来显示`ls` 执行时，对[`stat`](http://man7.org/linux/man-pages/man2/stat.2.html) 系统调用进行追踪对结果。若需要深入了解 `strace`，[这篇文章](https://blogs.oracle.com/linux/strace-the-sysadmins-microscope-v2) 值得一读。
+
+![ ](article/1212.png)
+
+> 静态分析
+
+有些问题是您不需要执行代码就能发现的。例如，仔细观察一段代码，您就能发现某个循环变量覆盖了某个已经存在的变量或函数名；或是有个变量在被读取之前并没有被定义。 这种情况下 [静态分析](https://en.wikipedia.org/wiki/Static_program_analysis) 工具就可以帮我们找到问题。静态分析会将程序的源码作为输入然后基于编码规则对其进行分析并对代码的正确性进行推理。
+
+> 性能分析
+
+计时：
+
+通常来说，用户时间+系统时间代表了您的进程所消耗的实际 CPU 
+
+- 真实时间 - 从程序开始到结束流失掉的真实时间，包括其他进程的执行时间以及阻塞消耗的时间（例如等待 I/O或网络）；
+- *User* - CPU 执行用户代码所花费的时间；
+- *Sys* - CPU 执行系统内核代码所花费的时间。
+
+例如，试着执行一个用于发起 HTTP 请求的命令并在其前面添加 [`time`](http://man7.org/linux/man-pages/man1/time.1.html) 前缀。网络不好的情况下您可能会看到下面的输出结果。请求花费了 `2s` 才完成，但是进程仅花费了 `15ms` 的 CPU 用户时间和 `12ms` 的 CPU 内核时间。
+
+```
+$ time curl https://missing.csail.mit.edu &> /dev/null
+real    0m2.561s
+user    0m0.015s
+sys     0m0.012s
+```
+
+性能分析工具（profilers）
+
+> `cpu`
+
+大多数情况下，当人们提及性能分析工具的时候，通常指的是 CPU 性能分析工具。 CPU 性能分析工具有两种： 追踪分析器（*tracing*）及采样分析器（*sampling*）。 追踪分析器 会记录程序的每一次函数调用，而采样分析器则只会周期性的监测（通常为每毫秒）您的程序并记录程序堆栈。它们使用这些记录来生成统计信息，显示程序在哪些事情上花费了最多的时间。如果您希望了解更多相关信息，可以参考[这篇](https://jvns.ca/blog/2017/12/17/how-do-ruby---python-profilers-work-) 介绍性的文章。
+
+> 内存
+
+像 C 或者 C++ 这样的语言，内存泄漏会导致您的程序在使用完内存后不去释放它。为了应对内存类的 Bug，我们可以使用类似 [Valgrind](https://valgrind.org/) 这样的工具来检查内存泄漏问题。
+
+> 事件分析
+
+在我们使用`strace`调试代码的时候，您可能会希望忽略一些特殊的代码并希望在分析时将其当作黑盒处理。[`perf`](http://man7.org/linux/man-pages/man1/perf.1.html) 命令将 CPU 的区别进行了抽象，它不会报告时间和内存的消耗，而是报告与您的程序相关的系统事件。
+
+例如，`perf` 可以报告不佳的缓存局部性（poor cache locality）、大量的页错误（page faults）或活锁（`livelocks`）。下面是关于常见命令的简介：
+
+- `perf list` - 列出可以被 pref 追踪的事件；
+- `perf stat COMMAND ARG1 ARG2` - 收集与某个进程或指令相关的事件；
+- `perf record COMMAND ARG1 ARG2` - 记录命令执行的采样信息并将统计数据储存在`perf.data`中；
+- `perf report` - 格式化并打印 `perf.data` 中的数据。
+
+> 可视化
+
+使用分析器来分析真实的程序时，由于软件的复杂性，其输出结果中将包含大量的信息。人类是一种视觉动物，非常不善于阅读大量的文字。因此很多工具都提供了可视化分析器输出结果的功能。
+
+对于采样分析器来说，常见的显示 CPU 分析数据的形式是 [火焰图](http://www.brendangregg.com/flamegraphs.html)，火焰图会在 Y 轴显示函数调用关系，并在 X 轴显示其耗时的比例。火焰图同时还是可交互的，您可以深入程序的某一具体部分，并查看其栈追踪。
+
+> 资源监控
+
+有时候，分析程序性能的第一步是搞清楚它所消耗的资源。程序变慢通常是因为它所需要的资源不够了。例如，没有足够的内存或者网络连接变慢的时候。
+
+有很多很多的工具可以被用来显示不同的系统资源，例如 CPU 占用、内存使用、网络、磁盘使用等。  
+
+- **通用监控** - 最流行的工具要数 [`htop`](https://htop.dev/),了，它是 [`top`](http://man7.org/linux/man-pages/man1/top.1.html)的改进版。`htop` 可以显示当前运行进程的多种统计信息。`htop` 有很多选项和快捷键，常见的有：`<F6>` 进程排序、 `t` 显示树状结构和 `h` 打开或折叠线程。 还可以留意一下 [`glances`](https://nicolargo.github.io/glances/) ，它的实现类似但是用户界面更好。如果需要合并测量全部的进程， [`dstat`](http://dag.wiee.rs/home-made/dstat/) 是也是一个非常好用的工具，它可以实时地计算不同子系统资源的度量数据，例如 I/O、网络、 CPU 利用率、上下文切换等等；
+- **I/O 操作** - [`iotop`](http://man7.org/linux/man-pages/man8/iotop.8.html) 可以显示实时 I/O 占用信息而且可以非常方便地检查某个进程是否正在执行大量的磁盘读写操作；
+- **磁盘使用** - [`df`](http://man7.org/linux/man-pages/man1/df.1.html) 可以显示每个分区的信息，而 [`du`](http://man7.org/linux/man-pages/man1/du.1.html) 则可以显示当前目录下每个文件的磁盘使用情况（ **d**isk **u**sage）。`-h` 选项可以使命令以对人类（**h**uman）更加友好的格式显示数据；[`ncdu`](https://dev.yorhel.nl/ncdu)是一个交互性更好的 `du` ，它可以让您在不同目录下导航、删除文件和文件夹；
+- **内存使用** - [`free`](http://man7.org/linux/man-pages/man1/free.1.html) 可以显示系统当前空闲的内存。内存也可以使用 `htop` 这样的工具来显示；
+
+![ ](article/1214.png)
+
+- **打开文件** - [`lsof`](http://man7.org/linux/man-pages/man8/lsof.8.html)  可以列出被进程打开的文件信息。 当我们需要查看某个文件是被哪个进程打开的时候，这个命令非常有用；
+- **网络连接和配置** - [`ss`](http://man7.org/linux/man-pages/man8/ss.8.html) 能帮助我们监控网络包的收发情况以及网络接口的显示信息。`ss` 常见的一个使用场景是找到端口被进程占用的信息。如果要显示路由、网络设备和接口信息，您可以使用 [`ip`](http://man7.org/linux/man-pages/man8/ip.8.html) 命令。注意，`netstat` 和 `ifconfig` 这两个命令已经被前面那些工具所代替了。
+- **网络使用** -  [`nethogs`](https://github.com/raboof/nethogs) 和 [`iftop`](http://www.ex-parrot.com/pdw/iftop/) 是非常好的用于对网络占用进行监控的交互式命令行工具。
+
+> 专用工具
+
+有时候，您只需要对黑盒程序进行基准测试，并依此对软件选择进行评估。 类似 `hyperfine`这样的命令行可以帮您快速进行基准测试。例如，我们在 shell 工具和脚本那一节课中我们推荐使用 `fd` 来代替 `find`。我们这里可以用`hyperfine`来比较一下它们。
+
+![ ](article/1215.png)
+
+```
+$ hyperfine --warmup 3 'fd -e jpg' 'find . -iname "*.jpg"'
+Benchmark #1: fd -e jpg
+  Time (mean ± σ):      51.4 ms ±   2.9 ms    [User: 121.0 ms, System: 160.5 ms]
+  Range (min … max):    44.2 ms …  60.1 ms    56 runs
+
+Benchmark #2: find . -iname "*.jpg"
+  Time (mean ± σ):      1.126 s ±  0.101 s    [User: 141.1 ms, System: 956.1 ms]
+  Range (min … max):    0.975 s …  1.287 s    10 runs
+
+Summary
+  'fd -e jpg' ran
+   21.89 ± 2.33 times faster than 'find . -iname "*.jpg"'
+```
+
+我们可以看到`fd` 比 `find` 要快20倍。
+
+## 元编程
+
