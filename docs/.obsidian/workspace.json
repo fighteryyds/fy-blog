@@ -1,0 +1,159 @@
+{
+  "main": {
+    "id": "250de16e7dea5122",
+    "type": "split",
+    "children": [
+      {
+        "id": "758f057661d4bfcb",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8e68538fe52963d1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "habit/painting.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "d60f95443d1393d5",
+    "type": "split",
+    "children": [
+      {
+        "id": "63b44d04263359a0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "550447cd1c91157f",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "5afa2ec479f8ac5c",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "66d1ed79b4686b74",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "d7a4edd9afa12c5c",
+    "type": "split",
+    "children": [
+      {
+        "id": "9dd1908a66e93ac2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e8c8233f1bdc679f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "habit/painting.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "e6ca547f0a1cb098",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "habit/painting.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "45322fe1023d11df",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "c274be3621e6bb67",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "habit/painting.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false
+    }
+  },
+  "active": "8e68538fe52963d1",
+  "lastOpenFiles": [
+    "study1/c/119.png",
+    "study1/book/12121.jpg",
+    "study1/article/111113.jpg",
+    "index.md",
+    "youlian.md",
+    "index/81.jpg",
+    "habit/painting.md"
+  ]
+}
