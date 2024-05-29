@@ -4,19 +4,15 @@
     "type": "split",
     "children": [
       {
-        "id": "758f057661d4bfcb",
+        "id": "7283c7214c26da30",
         "type": "tabs",
         "children": [
           {
-            "id": "8e68538fe52963d1",
+            "id": "8795feec6634c976",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "habit/painting.md",
-                "mode": "source",
-                "source": false
-              }
+              "type": "empty",
+              "state": {}
             }
           }
         ]
@@ -85,7 +81,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "habit/painting.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +97,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "habit/painting.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -124,9 +118,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "habit/painting.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -146,14 +138,14 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "8e68538fe52963d1",
+  "active": "8795feec6634c976",
   "lastOpenFiles": [
+    "habit/painting.md",
     "study1/c/119.png",
     "study1/book/12121.jpg",
     "study1/article/111113.jpg",
     "index.md",
     "youlian.md",
-    "index/81.jpg",
-    "habit/painting.md"
+    "index/81.jpg"
   ]
 }
