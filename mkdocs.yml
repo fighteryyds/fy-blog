@@ -35,9 +35,9 @@ nav:
     - c语言: study1/c.md
     - 文章: study1/article.md
     - 书籍: study1/book.md
-    - 英语: study1/English.md
+    - github&git: study1/English.md
   - 爱好: 
-    - 绘画: habit/painting.md
+    - 网络: habit/painting.md
 plugins:
   - mermaid2:
       arguments:
