@@ -11,8 +11,14 @@
             "id": "8795feec6634c976",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "index.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "index"
             }
           }
         ]
@@ -35,7 +41,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
             }
           },
           {
@@ -50,7 +58,9 @@
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
             }
           },
           {
@@ -58,7 +68,9 @@
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {}
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
             }
           }
         ]
@@ -81,6 +93,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "index/81.jpg",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -88,7 +101,9 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-coming-in",
+              "title": "81 的反向链接列表"
             }
           },
           {
@@ -97,9 +112,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "index/81.jpg",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-going-out",
+              "title": "81 的出链列表"
             }
           },
           {
@@ -110,7 +128,9 @@
               "state": {
                 "sortOrder": "frequency",
                 "useHierarchy": true
-              }
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
             }
           },
           {
@@ -118,7 +138,11 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "index/81.jpg"
+              },
+              "icon": "lucide-list",
+              "title": "81 的大纲"
             }
           }
         ]
@@ -140,12 +164,18 @@
   },
   "active": "8795feec6634c976",
   "lastOpenFiles": [
+    "study1/Linux.md",
+    "2025-10-30.md",
+    "study1/c.md",
+    "index.md",
+    "study1/book/12121.jpg",
+    "未命名 1",
+    "未命名",
+    "youlian.md",
+    "index/81.jpg",
+    "study1/article/86.jpg",
     "habit/painting.md",
     "study1/c/119.png",
-    "study1/book/12121.jpg",
-    "study1/article/111113.jpg",
-    "index.md",
-    "youlian.md",
-    "index/81.jpg"
+    "study1/article/111113.jpg"
   ]
 }
