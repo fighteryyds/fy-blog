@@ -144,7 +144,7 @@ grep, sed , awk
     一般我们使用正则表达式所使用的语系是LANG=C
 
 而正则表达式为了避免语系对输出结果的影响，设置了一些特殊字符，匹配特定的字符，在不同语系下的结果是相同的。
- ![在这里插入图片描述](Linux/11202.jpg)
+ ![在这里插入图片描述](11202.jpg)
 
 <MARK>这个用法像极了C语言中的 ctype.h 作为头文件引用的一系列函数，它们的功能是计算指定符号的个数，例如大写字母，小写字母，空格，TAB的个数。</MARK>
 
@@ -174,7 +174,7 @@ grep -in printf ex8  #grep -语法参数 你要查找的内容 文件名
 
 输出：
 
-![](Linux/1120.1.jpg)
+![](1120.1.jpg)
 
 它会将所有的printf高亮，但是因为我的terminal中并没有行数，所以它并没有输出行数。
 
@@ -192,7 +192,7 @@ find .|grep .c   #查找所有以.c结尾的文件
 
 我的电脑上的结果展示：
 
-![ ](Linux/11211.jpg)
+![ ](11211.jpg)
 
 我发现了另一种更实用的命令（它更简洁方便）：
 
@@ -200,7 +200,7 @@ find .|grep .c   #查找所有以.c结尾的文件
 ls *.c   #列出当前目录下所有.c文件
 ```
 
-![ ](Linux/11212.jpg)
+![ ](11212.jpg)
 
 3.5.6我们最后的任务就是统计这些文件所占用的总行数：
 
@@ -224,7 +224,7 @@ ls *.c | xargs wc -l
 
 在我的电脑上的展示如图：
 
-![ ](Linux/11213.jpg)
+![ ](11213.jpg)
 
 它会把当前目录的所有.c文件的行数列出，并且会计算所有文件的总行数。
 
@@ -248,11 +248,11 @@ du -sc ~/Documents/* | sort -nr | less
 
 第一个是Documents目录中的目录：
 
-![ ](Linux/11222.jpg)
+![ ](11222.jpg)
 
 然后是/usr/share目录中的各个目录：
 
-![ ](Linux/11223.jpg)
+![ ](11223.jpg)
 
 ### 在LInux上编写Hello World程序：
 
@@ -279,7 +279,7 @@ vi hello.c
 
 展示我的电脑上的结果：
 
-![ ](Linux/11224.jpg)
+![ ](11224.jpg)
 
 就像第一次用c在windows敲出Hello World一样，内心十分激动。
 
@@ -297,7 +297,7 @@ objdump -d hello> output
 
 可结果却并不是我想要的，此时就体现了实践的重要性了，因为这个重定向看似只是一些命令而已，你可能就会放弃实践，认为它很简单，只需要再使用的时候看一下就可以，可是当你使用的时候它却并不是你想要的结果。
 
-![ ](Linux/1291.jpg)
+![ ](fy-blog/docs/skills/Linux/1291.jpg)
 
 我想了想./不是运行代码程序吗，于是我使用了命令：
 
@@ -307,7 +307,7 @@ objdump -d hello> output
 
 哈哈，我获得了我想要的结果：
 
-![ ](Linux/1292.jpg)
+![ ](fy-blog/docs/skills/Linux/1292.jpg)
 
 如果你希望输出到文件的同时也输出到屏幕上, 你可以使用`tee`命令:
 
@@ -328,15 +328,15 @@ data文件：可以将程序要读取的内容提前写入data文件，这样如
 
 平方程序：
 
-![ ](Linux/1293.jpg)
+![ ](fy-blog/docs/skills/Linux/1293.jpg)
 
 data文件内的输入：
 
-![ ](Linux/1294.jpg)
+![ ](fy-blog/docs/skills/Linux/1294.jpg)
 
 Terminal：
 
-![ ](Linux/1295.jpg)
+![ ](fy-blog/docs/skills/Linux/1295.jpg)
 
 可以看到效果很明显！
 
@@ -354,7 +354,7 @@ time ./pinfang < data > /dev/null
 
 在我的电脑上的效果展示：
 
-![ ](Linux/1296.jpg)
+![ ](1296.jpg)
 
 选看2.EOF
 
@@ -375,17 +375,17 @@ scanf("%d", &num) 尝试从标准输入中读取一个整数，并将其存储�
 
 大规模的工程中通常含有几十甚至成百上千个源文件(Linux内核源码有25000+的源文件), 分别键入命令对它们进行编译是十分低效的.  Linux提供了一个高效管理工程文件的工具: GNU Make. 我们首先从一个简单的例子开始, 考虑上次提到的Hello World的例子, 在`hello.c`所在目录下新建一个文件`Makefile`, 输入以下内容并保存:
 
-![ ](Linux/12101.jpg)
+![ ](fy-blog/docs/skills/Linux/12101.jpg)
 
 返回命令行, 键入`make`
 
-![ ](Linux/12102.jpg)
+![ ](12102.jpg)
 
 因为我已经使用过命令`make hello`所以它已经是最新的文件了
 
 然后我删除了hello.c重新创建一下看看是什么效果：
 
-![ ](Linux/12103.jpg)
+![ ](12103.jpg)
 
 你会发现`make`程序调用了`gcc`进行编译. `Makefile`文件由若干规则组成, 规则的格式一般如下:
 
@@ -530,17 +530,17 @@ Arch Linux 拥有强大的功能，但因其特殊的理念使得用户不易使
 
 之后我和一位`good friend`探讨是否可以像windows一样将其安装在某个磁盘当中，实现双系统，经过二到三周，最终先将镜像文件下到U盘，利用系统U盘在成功安装了Linux系统（Ubuntu），在纯LInux系统中的磁盘分区、进制与windows不同：它有着6个磁盘分区，并且大部分磁盘分区类型都不同，不像windows都是ntfs，并且LInux出采用了1000进制，windows采用了1024进制。
 
-![ ](Linux/12121.jpg)
+![ ](fy-blog/docs/skills/Linux/12121.jpg)
 
 最后就是另一种方式，打开wsl2,利用windows的子系统，在微软商店中获取Ubuntu，这个比较方便，但是我感觉没有虚拟机那样给人一种同时使用双系统的感觉。（by another good friend's help）使用子系统的另一优势是可以很便利的获得多种Linux发行版，体验一下不同的Linux风格，比如arch和fedora
 
-![ ](Linux/12122.jpg)
+![ ](12122.jpg)
 
-![ ](Linux/12123.jpg)
+![ ](12123.jpg)
 
 ## Tmux
 
-![ ](Linux/122.png)
+![ ](122.png)
 
 1.安装
 
@@ -657,7 +657,7 @@ $ tmux split-window
 $ tmux split-window -h
 ```
 
-![ ](Linux/112.jpg)   
+![ ](112.jpg)   
 
 12.移动光标
 

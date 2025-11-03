@@ -30,14 +30,15 @@ nav:
   - 主页:
     - 主页: index.md
     - 友链: youlian.md
-  - 学习:
-    - Linux: study1/Linux.md
-    - c语言: study1/c.md
-    - 文章: study1/article.md
-    - 书籍: study1/book.md
-    - github&gitt: study1/English.md
-  - 爱好: 
-    - 网络: habit/painting.md
+  - 技术:
+    - Linux: skills/Linux.md
+    - c语言: skills/c.md
+    - 文章: skills/article.md
+    - 书籍: skills/book.md
+    - github&git: skills/git.md
+  - 考研: 
+    - 题目: kaoyan/questions.md
+    - 思想: kaoyan/thinkings.md
 plugins:
   - mermaid2:
       arguments:
