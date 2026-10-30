@@ -32,13 +32,10 @@ nav:
     - 友链: youlian.md
   - 技术:
     - Linux: skills/Linux.md
-    - c语言: skills/c.md
+    - C 语言: skills/c.md
     - 文章: skills/article.md
     - 书籍: skills/book.md
-    - github&git: skills/git.md
-  - 考研: 
-    - 题目: kaoyan/questions.md
-    - 思想: kaoyan/thinkings.md
+    - 技术问题的解决: skills/problems.md
 plugins:
   - mermaid2:
       arguments:
